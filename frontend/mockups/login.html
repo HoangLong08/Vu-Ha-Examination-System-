@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng nhập — DAU Exam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* ===== CSS RESET & BASE ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-family: 'Inter', system-ui, -apple-system, sans-serif; scroll-behavior: smooth; }
+    body { min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: background-color 0.5s ease, color 0.5s ease; }
+
+    /* ===== THEME TOKENS ===== */
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-glass: rgba(255, 255, 255, 0.65);
+      --bg-glass-heavy: rgba(255, 255, 255, 0.85);
+      --text-primary: #0f172a;
+      --text-secondary: #64748b;
+      --border-glass: rgba(255, 255, 255, 0.18);
+      --border-subtle: rgba(0, 0, 0, 0.08);
+      --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.12);
+      --glass-blur: 16px;
+      --color-brand-500: #3b82f6;
+      --color-brand-600: #2563eb;
+      --color-brand-700: #1d4ed8;
+      --color-accent: #059669;
+      --color-danger: #e11d48;
+      --orb-blue: rgba(59, 130, 246, 0.18);
+      --orb-green: rgba(5, 150, 105, 0.14);
+      --orb-purple: rgba(139, 92, 246, 0.10);
+      --card-inner-glow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+    .dark {
+      --bg-primary: #0a0f1a;
+      --bg-secondary: #111827;
+      --bg-glass: rgba(17, 24, 39, 0.70);
+      --bg-glass-heavy: rgba(17, 24, 39, 0.85);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --border-glass: rgba(255, 255, 255, 0.08);
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.40);
+      --glass-blur: 20px;
+      --orb-blue: rgba(59, 130, 246, 0.12);
+      --orb-green: rgba(5, 150, 105, 0.10);
+      --orb-purple: rgba(139, 92, 246, 0.08);
+      --card-inner-glow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+    body { background-color: var(--bg-primary); color: var(--text-primary); }
+
+    /* ===== GRADIENT MESH BACKGROUND ===== */
+    .gradient-mesh {
+      position: fixed; inset: 0; z-index: 0; overflow: hidden;
+      background: var(--bg-primary);
+    }
+    .orb {
+      position: absolute; border-radius: 50%; filter: blur(80px);
+      will-change: transform;
+    }
+    .orb-1 {
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, var(--orb-blue) 0%, transparent 70%);
+      top: -250px; right: -150px;
+      animation: float1 22s ease-in-out infinite;
+    }
+    .orb-2 {
+      width: 550px; height: 550px;
+      background: radial-gradient(circle, var(--orb-green) 0%, transparent 70%);
+      bottom: -200px; left: -120px;
+      animation: float2 28s ease-in-out infinite;
+    }
+    .orb-3 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, var(--orb-purple) 0%, transparent 70%);
+      top: 40%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation: float3 18s ease-in-out infinite;
+    }
+    .orb-4 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(251, 191, 36, 0.08) 0%, transparent 70%);
+      top: 10%; left: 20%;
+      animation: float1 25s ease-in-out infinite reverse;
+    }
+
+    @keyframes float1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(40px, -60px) scale(1.06); }
+      50% { transform: translate(-20px, 30px) scale(0.97); }
+      75% { transform: translate(30px, 20px) scale(1.03); }
+    }
+    @keyframes float2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(50px, -40px) scale(1.08); }
+      66% { transform: translate(-30px, 25px) scale(0.94); }
+    }
+    @keyframes float3 {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-45%, -55%) scale(1.1); }
+    }
+
+    /* ===== NOISE TEXTURE OVERLAY ===== */
+    .noise-overlay {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    /* ===== LOGIN CARD ===== */
+    .login-container {
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column; align-items: center;
+      animation: page-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes page-enter {
+      from { opacity: 0; transform: translateY(20px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .login-card {
+      background: var(--bg-glass-heavy);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border-glass);
+      border-radius: 24px;
+      box-shadow: var(--glass-shadow), var(--card-inner-glow);
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 440px;
+      text-align: center;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .login-card:hover {
+      box-shadow: var(--glass-shadow), 0 16px 48px rgba(31, 38, 135, 0.08);
+    }
+
+    /* ===== LOGO ===== */
+    .logo-wrapper {
+      margin-bottom: 8px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .logo-icon {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .logo-icon::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+      border-radius: 18px;
+    }
+    .logo-icon svg { color: white; position: relative; z-index: 1; }
+    .logo-text {
+      font-size: 28px; font-weight: 700;
+      background: linear-gradient(135deg, var(--color-brand-600), var(--color-brand-700));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+    .dark .logo-text {
+      background: linear-gradient(135deg, #60a5fa, #93c5fd);
+      -webkit-background-clip: text; background-clip: text;
+    }
+    .logo-subtitle {
+      font-size: 15px; color: var(--text-secondary);
+      margin-top: 4px; font-weight: 400;
+    }
+
+    /* ===== DIVIDER ===== */
+    .divider {
+      width: 100%; height: 1px;
+      background: linear-gradient(to right, transparent, var(--border-subtle), transparent);
+      margin: 28px 0;
+    }
+    .divider-text {
+      display: flex; align-items: center; gap: 12px;
+      margin: 24px 0;
+      color: var(--text-secondary); font-size: 13px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .divider-text::before, .divider-text::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(to right, transparent, var(--border-subtle), transparent);
+    }
+
+    /* ===== SSO BUTTONS ===== */
+    .sso-buttons { display: flex; flex-direction: column; gap: 14px; }
+    .sso-btn {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      padding: 14px 24px;
+      border-radius: 14px; border: 1px solid var(--border-glass);
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative; overflow: hidden;
+      text-decoration: none;
+    }
+    .sso-btn::before {
+      content: '';
+      position: absolute; inset: 0;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      border-radius: 14px;
+    }
+    .sso-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    .sso-btn:active { transform: translateY(0) scale(0.98); }
+
+    .sso-btn--google::before {
+      background: linear-gradient(135deg, rgba(234,67,53,0.08), rgba(251,188,5,0.05));
+    }
+    .sso-btn--google:hover::before { opacity: 1; }
+    .sso-btn--google:hover {
+      border-color: rgba(234, 67, 53, 0.25);
+      box-shadow: 0 8px 24px rgba(234, 67, 53, 0.12);
+    }
+
+    .sso-btn--microsoft::before {
+      background: linear-gradient(135deg, rgba(0,120,215,0.08), rgba(0,164,239,0.05));
+    }
+    .sso-btn--microsoft:hover::before { opacity: 1; }
+    .sso-btn--microsoft:hover {
+      border-color: rgba(0, 120, 215, 0.25);
+      box-shadow: 0 8px 24px rgba(0, 120, 215, 0.12);
+    }
+
+    .sso-icon {
+      width: 22px; height: 22px; flex-shrink: 0;
+    }
+
+    /* ===== THEME TOGGLE ===== */
+    .theme-toggle {
+      position: fixed; top: 24px; right: 24px; z-index: 100;
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-glass);
+      border-radius: 14px;
+      padding: 10px;
+      cursor: pointer;
+      color: var(--text-primary);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.25s ease;
+      box-shadow: var(--glass-shadow);
+    }
+    .theme-toggle:hover {
+      transform: scale(1.08);
+      box-shadow: var(--glass-shadow), 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .theme-toggle:active { transform: scale(0.95); }
+    .theme-toggle svg { width: 20px; height: 20px; }
+
+    /* ===== FOOTER ===== */
+    .login-footer {
+      margin-top: 24px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .login-footer strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .login-footer a {
+      color: var(--color-brand-600);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .dark .login-footer a { color: #60a5fa; }
+    .login-footer a:hover { text-decoration: underline; }
+
+    /* ===== FEATURES ROW ===== */
+    .features-row {
+      display: flex; gap: 24px; justify-content: center;
+      margin-top: 8px;
+    }
+    .feature-item {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .feature-item svg {
+      width: 14px; height: 14px; color: var(--color-accent);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 480px) {
+      .login-card { padding: 36px 24px; margin: 16px; border-radius: 20px; }
+      .logo-icon { width: 60px; height: 60px; }
+      .logo-text { font-size: 24px; }
+      .features-row { flex-direction: column; gap: 8px; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Gradient Mesh Background -->
+  <div class="gradient-mesh">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+  </div>
+  <div class="noise-overlay"></div>
+
+  <!-- Theme Toggle -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Chuyển chế độ giao diện">
+    <i data-lucide="moon" class="icon-moon"></i>
+    <i data-lucide="sun" class="icon-sun" style="display:none;"></i>
+  </button>
+
+  <!-- Login Card -->
+  <div class="login-container">
+    <div class="login-card">
+      <!-- Logo -->
+      <div class="logo-wrapper">
+        <div class="logo-icon">
+          <i data-lucide="graduation-cap" style="width:36px;height:36px;"></i>
+        </div>
+        <div class="logo-text">DAU Exam</div>
+        <div class="logo-subtitle">Hệ thống thi trực tuyến</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- SSO Buttons -->
+      <div class="sso-buttons">
+        <button class="sso-btn sso-btn--google">
+          <svg class="sso-icon" viewBox="0 0 24 24">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Đăng nhập với Google
+        </button>
+
+        <button class="sso-btn sso-btn--microsoft">
+          <svg class="sso-icon" viewBox="0 0 24 24">
+            <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+            <rect x="13" y="1" width="10" height="10" fill="#7FBA00"/>
+            <rect x="1" y="13" width="10" height="10" fill="#00A4EF"/>
+            <rect x="13" y="13" width="10" height="10" fill="#FFB900"/>
+          </svg>
+          Đăng nhập với Microsoft
+        </button>
+      </div>
+
+      <div class="divider-text">
+        <span>Dành cho sinh viên và giảng viên DAU</span>
+      </div>
+
+      <!-- Features -->
+      <div class="features-row">
+        <div class="feature-item">
+          <i data-lucide="shield-check"></i>
+          <span>Bảo mật SSO</span>
+        </div>
+        <div class="feature-item">
+          <i data-lucide="monitor"></i>
+          <span>Giám sát AI</span>
+        </div>
+        <div class="feature-item">
+          <i data-lucide="zap"></i>
+          <span>Tức thời</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <strong>Đại học Kiến trúc Đà Nẵng</strong><br>
+      <span>566 Núi Thành, Hải Châu, Đà Nẵng</span><br>
+      <a href="#">Hướng dẫn sử dụng</a> · <a href="#">Liên hệ hỗ trợ</a>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const iconMoon = themeToggle.querySelector('.icon-moon');
+    const iconSun = themeToggle.querySelector('.icon-sun');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    let isDark = localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : prefersDark;
+
+    function applyTheme(dark) {
+      document.documentElement.classList.toggle('dark', dark);
+      iconMoon.style.display = dark ? 'none' : 'block';
+      iconSun.style.display = dark ? 'block' : 'none';
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+    }
+    applyTheme(isDark);
+
+    themeToggle.addEventListener('click', () => {
+      isDark = !isDark;
+      applyTheme(isDark);
+    });
+
+    // Button ripple effect
+    document.querySelectorAll('.sso-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        ripple.style.cssText = `position:absolute;border-radius:50%;background:rgba(255,255,255,0.3);width:0;height:0;transform:translate(-50%,-50%);animation:ripple 0.6s ease-out;pointer-events:none;`;
+        const rect = this.getBoundingClientRect();
+        ripple.style.left = (e.clientX - rect.left) + 'px';
+        ripple.style.top = (e.clientY - rect.top) + 'px';
+        this.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+      });
+    });
+
+    // Add ripple keyframe
+    const style = document.createElement('style');
+    style.textContent = `@keyframes ripple { to { width: 300px; height: 300px; opacity: 0; } }`;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

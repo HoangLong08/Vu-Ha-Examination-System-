@@ -1,0 +1,87 @@
+{
+  "data": [
+    {
+      "id": "et000001-aaaa-4bbb-cccc-ddddeeee0001",
+      "createdAt": "2026-04-01T08:00:00.000Z",
+      "updatedAt": "2026-06-10T09:00:00.000Z",
+      "deletedAt": null,
+      "name": "Thi cuối kỳ - Học kỳ 2 năm 2025-2026",
+      "code": "CK-HK2-2526",
+      "description": "Đợt thi cuối kỳ Học kỳ 2 năm học 2025-2026, Đại học Kiến trúc Đà Nẵng",
+      "semesterId": "sem00001-1111-4222-3333-444455556666",
+      "semesterName": "Học kỳ 2",
+      "academicYearId": "ay000001-aaaa-4bbb-cccc-ddddeeee1111",
+      "academicYearName": "2025-2026",
+      "examType": "CUOI_KY",
+      "status": "DANG_MO",
+      "startDate": "2026-06-15T00:00:00.000Z",
+      "endDate": "2026-07-05T23:59:59.000Z",
+      "createdBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "totalSubjects": 45,
+      "totalExamRooms": 120
+    },
+    {
+      "id": "et000001-aaaa-4bbb-cccc-ddddeeee0002",
+      "createdAt": "2025-10-01T08:00:00.000Z",
+      "updatedAt": "2026-01-20T16:00:00.000Z",
+      "deletedAt": null,
+      "name": "Thi cuối kỳ - Học kỳ 1 năm 2025-2026",
+      "code": "CK-HK1-2526",
+      "description": "Đợt thi cuối kỳ Học kỳ 1 năm học 2025-2026",
+      "semesterId": "sem00001-1111-4222-3333-444455557777",
+      "semesterName": "Học kỳ 1",
+      "academicYearId": "ay000001-aaaa-4bbb-cccc-ddddeeee1111",
+      "academicYearName": "2025-2026",
+      "examType": "CUOI_KY",
+      "status": "DA_DONG",
+      "startDate": "2026-01-05T00:00:00.000Z",
+      "endDate": "2026-01-25T23:59:59.000Z",
+      "createdBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "totalSubjects": 42,
+      "totalExamRooms": 110
+    },
+    {
+      "id": "et000001-aaaa-4bbb-cccc-ddddeeee0003",
+      "createdAt": "2026-06-05T10:00:00.000Z",
+      "updatedAt": "2026-06-05T10:00:00.000Z",
+      "deletedAt": null,
+      "name": "Thi giữa kỳ - Học kỳ hè 2025-2026",
+      "code": "GK-HKH-2526",
+      "description": "Đợt thi giữa kỳ Học kỳ hè năm học 2025-2026 (dự thảo)",
+      "semesterId": "sem00001-1111-4222-3333-444455558888",
+      "semesterName": "Học kỳ hè",
+      "academicYearId": "ay000001-aaaa-4bbb-cccc-ddddeeee1111",
+      "academicYearName": "2025-2026",
+      "examType": "GIUA_KY",
+      "status": "DU_THAO",
+      "startDate": "2026-08-01T00:00:00.000Z",
+      "endDate": "2026-08-10T23:59:59.000Z",
+      "createdBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "totalSubjects": 15,
+      "totalExamRooms": 0
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "take": 10,
+    "itemCount": 3,
+    "pageCount": 1,
+    "hasPreviousPage": false,
+    "hasNextPage": false
+  }
+}

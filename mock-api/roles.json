@@ -1,0 +1,232 @@
+{
+  "data": [
+    {
+      "id": "a1b2c3d4-e5f6-4890-abcd-ef1234567001",
+      "name": "SYSTEM_ADMIN",
+      "description": "Quản trị hệ thống",
+      "isSystem": true,
+      "permissions": [
+        {
+          "id": "p0000001-0000-4000-a000-000000000001",
+          "module": "USER",
+          "name": "USER.CREATE",
+          "description": "Tạo người dùng"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000002",
+          "module": "USER",
+          "name": "USER.READ",
+          "description": "Xem thông tin người dùng"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000003",
+          "module": "USER",
+          "name": "USER.UPDATE",
+          "description": "Cập nhật người dùng"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000004",
+          "module": "USER",
+          "name": "USER.DELETE",
+          "description": "Xóa người dùng"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000005",
+          "module": "ROLE",
+          "name": "ROLE.CREATE",
+          "description": "Tạo vai trò"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000006",
+          "module": "ROLE",
+          "name": "ROLE.READ",
+          "description": "Xem vai trò"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000007",
+          "module": "ROLE",
+          "name": "ROLE.UPDATE",
+          "description": "Cập nhật vai trò"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000008",
+          "module": "ROLE",
+          "name": "ROLE.DELETE",
+          "description": "Xóa vai trò"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000009",
+          "module": "EXAM_TERM",
+          "name": "EXAM_TERM.MANAGE",
+          "description": "Quản lý đợt thi"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000010",
+          "module": "EXAM_MATRIX",
+          "name": "EXAM_MATRIX.MANAGE",
+          "description": "Quản lý ma trận đề"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000011",
+          "module": "QUESTION_BANK",
+          "name": "QUESTION_BANK.MANAGE",
+          "description": "Quản lý ngân hàng câu hỏi"
+        }
+      ],
+      "activeUserCount": 2,
+      "inactiveUserCount": 0,
+      "createdAt": "2025-01-15T00:00:00.000Z",
+      "updatedAt": "2025-01-15T00:00:00.000Z",
+      "deletedAt": null
+    },
+    {
+      "id": "a1b2c3d4-e5f6-4890-abcd-ef1234567002",
+      "name": "EXAM_OFFICER",
+      "description": "Cán bộ khảo thí",
+      "isSystem": false,
+      "permissions": [
+        {
+          "id": "p0000001-0000-4000-a000-000000000009",
+          "module": "EXAM_TERM",
+          "name": "EXAM_TERM.MANAGE",
+          "description": "Quản lý đợt thi"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000010",
+          "module": "EXAM_MATRIX",
+          "name": "EXAM_MATRIX.MANAGE",
+          "description": "Quản lý ma trận đề"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000011",
+          "module": "QUESTION_BANK",
+          "name": "QUESTION_BANK.MANAGE",
+          "description": "Quản lý ngân hàng câu hỏi"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000012",
+          "module": "EXAM_TERM",
+          "name": "EXAM_TERM.CREATE",
+          "description": "Tạo đợt thi"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000013",
+          "module": "EXAM_TERM",
+          "name": "EXAM_TERM.OPEN",
+          "description": "Mở đợt thi"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000014",
+          "module": "EXAM_TERM",
+          "name": "EXAM_TERM.CLOSE",
+          "description": "Đóng đợt thi"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000015",
+          "module": "EXAM_MATRIX",
+          "name": "EXAM_MATRIX.CREATE",
+          "description": "Tạo ma trận đề"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000016",
+          "module": "EXAM_MATRIX",
+          "name": "EXAM_MATRIX.APPROVE",
+          "description": "Duyệt ma trận đề"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000017",
+          "module": "QUESTION_BANK",
+          "name": "QUESTION_BANK.CREATE",
+          "description": "Tạo ngân hàng câu hỏi"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000018",
+          "module": "QUESTION_BANK",
+          "name": "QUESTION_BANK.REVIEW",
+          "description": "Duyệt câu hỏi"
+        }
+      ],
+      "activeUserCount": 5,
+      "inactiveUserCount": 1,
+      "createdAt": "2025-01-15T00:00:00.000Z",
+      "updatedAt": "2025-06-01T10:00:00.000Z",
+      "deletedAt": null
+    },
+    {
+      "id": "a1b2c3d4-e5f6-4890-abcd-ef1234567003",
+      "name": "INVIGILATOR",
+      "description": "Giám thị",
+      "isSystem": false,
+      "permissions": [
+        {
+          "id": "p0000001-0000-4000-a000-000000000019",
+          "module": "EXAM",
+          "name": "EXAM.INVIGILATE",
+          "description": "Giám sát phòng thi"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000020",
+          "module": "EXAM",
+          "name": "EXAM.VIEW_ROOM",
+          "description": "Xem phòng thi được phân công"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000021",
+          "module": "EXAM",
+          "name": "EXAM.REPORT_INCIDENT",
+          "description": "Báo cáo sự cố trong phòng thi"
+        },
+        {
+          "id": "p0000001-0000-4000-a000-000000000022",
+          "module": "EXAM_RESULT",
+          "name": "EXAM_RESULT.VIEW_ROOM",
+          "description": "Xem kết quả phòng thi"
+        }
+      ],
+      "activeUserCount": 15,
+      "inactiveUserCount": 3,
+      "createdAt": "2025-01-15T00:00:00.000Z",
+      "updatedAt": "2025-08-20T09:00:00.000Z",
+      "deletedAt": null
+    },
+    {
+      "id": "d4e5f6a7-b8c9-4d0e-f1a2-b3c4d5e6f789",
+      "name": "STUDENT",
+      "description": "Sinh viên",
+      "isSystem": false,
+      "permissions": [
+        {
+          "id": "f1a2b3c4-d5e6-4f78-9a0b-c1d2e3f4a5b6",
+          "module": "EXAM",
+          "name": "EXAM.VIEW",
+          "description": "Xem bài thi"
+        },
+        {
+          "id": "f1a2b3c4-d5e6-4f78-9a0b-c1d2e3f4a5b7",
+          "module": "EXAM",
+          "name": "EXAM.TAKE",
+          "description": "Làm bài thi"
+        },
+        {
+          "id": "f1a2b3c4-d5e6-4f78-9a0b-c1d2e3f4a5b8",
+          "module": "EXAM_RESULT",
+          "name": "EXAM_RESULT.VIEW_OWN",
+          "description": "Xem kết quả thi của bản thân"
+        }
+      ],
+      "activeUserCount": 1250,
+      "inactiveUserCount": 30,
+      "createdAt": "2025-01-15T00:00:00.000Z",
+      "updatedAt": "2025-09-01T08:00:00.000Z",
+      "deletedAt": null
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "take": 10,
+    "itemCount": 4,
+    "pageCount": 1,
+    "hasPreviousPage": false,
+    "hasNextPage": false
+  }
+}

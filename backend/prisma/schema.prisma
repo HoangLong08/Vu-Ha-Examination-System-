@@ -1,0 +1,436 @@
+// This is the Prisma schema for the DAU Examination System
+// All 23 tables from ERD doc 07-erd.md
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// 1. USER & SECURITY
+// ============================================
+
+model User {
+  id          String    @id @default(uuid()) @db.Uuid
+  username    String?   @unique
+  fullName    String
+  email       String    @unique
+  avatar      String?
+  status      String    @default("ACTIVE")
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  userRoles              UserRole[]
+  auditLogs              AuditLog[]
+  invigilatorAssignments InvigilatorAssignment[]
+}
+
+model Role {
+  id   String @id @default(uuid()) @db.Uuid
+  code String @unique
+  name String
+
+  userRoles UserRole[]
+}
+
+model UserRole {
+  userId String @db.Uuid
+  roleId String @db.Uuid
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+}
+
+// ============================================
+// 2. STUDENT DOMAIN
+// ============================================
+
+model Student {
+  id          String @id @default(uuid()) @db.Uuid
+  studentCode String @unique
+  fullName    String
+  email       String @unique
+  className   String?
+  facultyName String?
+  status      String @default("ACTIVE")
+
+  roomAssignments RoomAssignment[]
+  attendances     Attendance[]
+  examAttempts    ExamAttempt[]
+  results         Result[]
+  violations      Violation[]
+}
+
+// ============================================
+// 3. EXAM DOMAIN
+// ============================================
+
+model Exam {
+  id           String   @id @default(uuid()) @db.Uuid
+  code         String   @unique
+  name         String
+  academicYear String
+  semester     String
+  startDate    DateTime
+  endDate      DateTime
+  status       String   @default("DRAFT")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  deletedAt    DateTime?
+
+  examPeriods ExamPeriod[]
+}
+
+model ExamPeriod {
+  id        String   @id @default(uuid()) @db.Uuid
+  examId    String   @db.Uuid
+  code      String   @unique
+  name      String
+  startDate DateTime
+  endDate   DateTime
+
+  exam     Exam          @relation(fields: [examId], references: [id], onDelete: Cascade)
+  sessions ExamSession[]
+
+  @@index([examId])
+}
+
+model ExamSession {
+  id              String   @id @default(uuid()) @db.Uuid
+  periodId        String   @db.Uuid
+  code            String   @unique
+  name            String
+  examDate        DateTime
+  startTime       DateTime
+  endTime         DateTime
+  durationMinutes Int
+  status          String   @default("SCHEDULED")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  period                 ExamPeriod              @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  sessionExams           SessionExam[]
+  roomAssignments        RoomAssignment[]
+  invigilatorAssignments InvigilatorAssignment[]
+  attendances            Attendance[]
+  examAttempts           ExamAttempt[]
+  violations             Violation[]
+
+  @@index([periodId])
+  @@index([examDate])
+  @@index([status])
+}
+
+model ExamDefinition {
+  id             String @id @default(uuid()) @db.Uuid
+  externalExamId String? @unique
+  code           String @unique
+  title          String
+  durationMinutes Int
+  totalQuestions  Int
+  sourceSystem   String?
+  showResult     Boolean  @default(true)  // FR-L-003: cho phép SV xem điểm sau khi nộp
+  maxAttempt     Int      @default(1)     // FR-Q-003: số lần thi tối đa
+  shuffleQuestions Boolean @default(false) // FR-Q-001: trộn thứ tự câu hỏi
+  shuffleAnswers   Boolean @default(false) // FR-Q-002: trộn thứ tự đáp án
+  // EPIC-21: nguồn câu hỏi từ exam-core (KT&ĐBCL). Ưu tiên matrix (rút theo ma trận),
+  // không có thì lấy cả bank. Bỏ trống => fallback EXAM_CORE_BANK_ID toàn cục.
+  examCoreBankId   String?  // ID ngân hàng câu hỏi exam-core
+  examCoreMatrixId String?  // ID ma trận đề exam-core (rút theo section/độ khó)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  sessionExams SessionExam[]
+  examAttempts ExamAttempt[]
+  results      Result[]
+}
+
+model SessionExam {
+  id               String @id @default(uuid()) @db.Uuid
+  sessionId        String @db.Uuid
+  examDefinitionId String @db.Uuid
+
+  session        ExamSession    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  examDefinition ExamDefinition @relation(fields: [examDefinitionId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, examDefinitionId])
+  @@index([sessionId])
+  @@index([examDefinitionId])
+}
+
+// ============================================
+// 4. ROOM DOMAIN
+// ============================================
+
+model ExamRoom {
+  id       String @id @default(uuid()) @db.Uuid
+  code     String @unique
+  name     String
+  capacity Int
+  location String?
+
+  roomAssignments        RoomAssignment[]
+  invigilatorAssignments InvigilatorAssignment[]
+  attendances            Attendance[]
+  violations             Violation[]
+}
+
+model RoomAssignment {
+  id            String  @id @default(uuid()) @db.Uuid
+  roomId        String  @db.Uuid
+  studentId     String  @db.Uuid
+  sessionId     String  @db.Uuid
+  seatNumber    String?
+  machineNumber String?
+
+  room    ExamRoom    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  student Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  session ExamSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, sessionId, studentId])
+  @@index([roomId])
+  @@index([studentId])
+  @@index([sessionId])
+}
+
+model InvigilatorAssignment {
+  id             String @id @default(uuid()) @db.Uuid
+  roomId         String @db.Uuid
+  invigilatorId  String @db.Uuid
+  sessionId      String @db.Uuid
+
+  room        ExamRoom    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  invigilator User        @relation(fields: [invigilatorId], references: [id], onDelete: Cascade)
+  session     ExamSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, sessionId, invigilatorId])
+  @@index([roomId])
+  @@index([invigilatorId])
+  @@index([sessionId])
+}
+
+// ============================================
+// 5. ATTENDANCE DOMAIN
+// ============================================
+
+model Attendance {
+  id           String   @id @default(uuid()) @db.Uuid
+  studentId    String   @db.Uuid
+  sessionId    String   @db.Uuid
+  roomId       String   @db.Uuid
+  status       String   @default("PRESENT") // PRESENT, ABSENT, LATE, VIOLATION
+  attendanceAt DateTime @default(now())
+  attendanceBy String?
+
+  student Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  session ExamSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  room    ExamRoom    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, sessionId])
+  @@index([studentId])
+  @@index([sessionId])
+  @@index([roomId])
+}
+
+// ============================================
+// 6. EXAM ATTEMPT DOMAIN
+// ============================================
+
+model ExamAttempt {
+  id               String    @id @default(uuid()) @db.Uuid
+  studentId        String    @db.Uuid
+  sessionId        String?   @db.Uuid
+  examDefinitionId String    @db.Uuid
+  status           String    @default("NOT_STARTED") // NOT_STARTED, IN_PROGRESS, SUBMITTED, EXPIRED
+  startedAt        DateTime?
+  submittedAt      DateTime?
+  remainingSeconds Int?
+  score            Float?
+  clientIp         String?
+  userAgent        String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  student        Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  session        ExamSession?     @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  examDefinition ExamDefinition   @relation(fields: [examDefinitionId], references: [id], onDelete: Cascade)
+  questions      AttemptQuestion[]
+  answers        AttemptAnswer[]
+  result         Result?
+
+  // Không ràng buộc unique (studentId, examDefinitionId): cho phép nhiều lượt thi
+  // (retake). Giới hạn số lần sẽ do EPIC-24 Max Attempt quản lý sau.
+  @@index([studentId])
+  @@index([sessionId])
+  @@index([examDefinitionId])
+  @@index([status])
+}
+
+model AttemptQuestion {
+  id               String @id @default(uuid()) @db.Uuid
+  attemptId        String @db.Uuid
+  questionId       String
+  questionOrder    Int
+  questionContent  String
+  questionType     String
+  questionSnapshot Json?
+
+  attempt ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId])
+  @@index([attemptId])
+}
+
+model AttemptAnswer {
+  id         String    @id @default(uuid()) @db.Uuid
+  attemptId  String    @db.Uuid
+  questionId String
+  answerValue String?
+  isCorrect  Boolean?
+  // Điểm CHẤM TAY cho câu tự luận (0..1). null = chưa chấm. Câu tự chấm bỏ qua.
+  manualCredit Float?
+  answeredAt DateTime  @default(now())
+
+  attempt ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId])
+  @@index([attemptId])
+  @@index([attemptId, questionId])
+}
+
+// ============================================
+// 7. QUESTION SNAPSHOT DOMAIN
+// ============================================
+
+model QuestionSnapshot {
+  id                 String  @id @default(uuid()) @db.Uuid
+  externalQuestionId String
+  title              String?
+  content            String
+  type               String
+  mediaUrl           String?
+  correctAnswer      String
+  explanation        String?
+  difficulty         String?
+  sourceSystem       String?
+  createdAt          DateTime @default(now())
+
+  @@index([externalQuestionId])
+}
+
+// ============================================
+// 8. RESULT DOMAIN
+// ============================================
+
+model Result {
+  id               String    @id @default(uuid()) @db.Uuid
+  attemptId        String    @unique @db.Uuid
+  studentId        String    @db.Uuid
+  examDefinitionId String    @db.Uuid
+  totalQuestions   Int
+  correctAnswers   Int
+  wrongAnswers     Int
+  score            Float
+  grade            String?
+  published        Boolean   @default(false)
+  publishedAt      DateTime?
+  createdAt        DateTime  @default(now())
+
+  attempt        ExamAttempt    @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  student        Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  examDefinition ExamDefinition @relation(fields: [examDefinitionId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([examDefinitionId])
+}
+
+// ============================================
+// 9. VIOLATION DOMAIN
+// ============================================
+
+model Violation {
+  id            String   @id @default(uuid()) @db.Uuid
+  studentId     String   @db.Uuid
+  sessionId     String   @db.Uuid
+  roomId        String   @db.Uuid
+  machineNumber String?
+  type          String   // TAB_SWITCH, SCREEN_EXIT, DEVICE_CHECK_FAIL
+  description   String?
+  recordedBy    String?  // invigilator name or SYSTEM
+  recordedAt    DateTime @default(now())
+
+  student     Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  session     ExamSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  room        ExamRoom    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  attachments ViolationAttachment[]
+
+  @@index([studentId])
+  @@index([sessionId])
+  @@index([roomId])
+}
+
+model ViolationAttachment {
+  id          String   @id @default(uuid()) @db.Uuid
+  violationId String   @db.Uuid
+  fileName    String
+  fileUrl     String
+  uploadedAt  DateTime @default(now())
+
+  violation Violation @relation(fields: [violationId], references: [id], onDelete: Cascade)
+
+  @@index([violationId])
+}
+
+// ============================================
+// 10. REPORT DOMAIN
+// ============================================
+
+model ReportExport {
+  id          String   @id @default(uuid()) @db.Uuid
+  reportType  String
+  fileUrl     String
+  generatedBy String
+  generatedAt DateTime @default(now())
+}
+
+// ============================================
+// 11. AUDIT DOMAIN
+// ============================================
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid
+  action     String
+  entityType String
+  entityId   String?
+  oldValue   Json?
+  newValue   Json?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([entityType])
+  @@index([createdAt])
+}
+
+// ============================================
+// 12. SYSTEM CONFIG
+// ============================================
+
+model SystemConfig {
+  id          String   @id @default(uuid()) @db.Uuid
+  key         String   @unique
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt
+}

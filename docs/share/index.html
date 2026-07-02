@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hệ thống Thi trắc nghiệm DAU — Tổng quan dự án</title>
+<meta name="description" content="Hệ thống thi trắc nghiệm trực tuyến của Đại học Kiến trúc Đà Nẵng — kiến trúc, tính năng, công nghệ, hướng dẫn cài đặt." />
+<style>
+  :root{
+    --brand:#2563eb; --brand2:#1d4ed8; --dau:#c0202b; --ink:#0f172a; --mut:#475569;
+    --bg:#f8fafc; --card:#ffffff; --line:#e2e8f0; --ok:#059669; --warn:#d97706;
+    --radius:16px; --shadow:0 1px 3px rgba(0,0,0,.06),0 8px 24px rgba(15,23,42,.05);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.65;-webkit-font-smoothing:antialiased}
+  a{color:var(--brand);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+  /* Nav */
+  header.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;align-items:center;gap:18px;height:60px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--ink)}
+  .logo .dot{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--dau),#e0566a);
+    display:grid;place-items:center;color:#fff;font-weight:900;font-size:14px}
+  nav.links{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+  nav.links a{padding:7px 12px;border-radius:9px;color:var(--mut);font-size:14px;font-weight:600}
+  nav.links a:hover{background:#eff4ff;color:var(--brand);text-decoration:none}
+  /* Hero */
+  .hero{background:linear-gradient(180deg,#eef4ff, #f8fafc);border-bottom:1px solid var(--line);padding:54px 0 44px}
+  .hero h1{font-size:40px;line-height:1.15;margin:0 0 12px;letter-spacing:-.02em}
+  .hero h1 .g{background:linear-gradient(120deg,var(--brand),#60a5fa);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p.sub{font-size:18px;color:var(--mut);max-width:760px;margin:0 0 20px}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .badge{font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--mut)}
+  .badge.b{background:#eff4ff;border-color:#dbe6ff;color:var(--brand2)}
+  .badge.g{background:#ecfdf5;border-color:#c9f0dd;color:var(--ok)}
+  .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:12px;font-weight:700;font-size:15px}
+  .btn.p{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;box-shadow:0 6px 18px rgba(37,99,235,.28)}
+  .btn.s{background:#fff;border:1px solid var(--line);color:var(--ink)}
+  /* Sections */
+  section{padding:46px 0;border-bottom:1px solid var(--line)}
+  section h2{font-size:27px;margin:0 0 6px;letter-spacing:-.01em}
+  section .lead{color:var(--mut);margin:0 0 26px;font-size:16px}
+  h3{font-size:18px;margin:26px 0 10px}
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:780px){.g2,.g3{grid-template-columns:1fr}.hero h1{font-size:31px}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 18px;box-shadow:var(--shadow)}
+  .card h4{margin:0 0 6px;font-size:16px;display:flex;align-items:center;gap:9px}
+  .card p{margin:0;color:var(--mut);font-size:14.5px}
+  .ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:16px;flex:0 0 auto}
+  .i-blue{background:#eff4ff}.i-green{background:#ecfdf5}.i-amber{background:#fffbeb}.i-rose{background:#fef2f2}.i-violet{background:#f5f3ff}
+  table{width:100%;border-collapse:collapse;font-size:14.5px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+  th{background:#f1f5f9;font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut)}
+  tr:last-child td{border-bottom:0}
+  code{background:#f1f5f9;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  pre{background:#0f172a;color:#e2e8f0;border-radius:12px;padding:16px 18px;overflow:auto;font-size:13.5px;line-height:1.6}
+  pre code{background:none;border:0;color:inherit;padding:0}
+  ul.clean{margin:0;padding-left:18px;color:var(--mut)}
+  ul.clean li{margin:5px 0}
+  .pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px}
+  .pill.ok{background:#ecfdf5;color:var(--ok)} .pill.wip{background:#fffbeb;color:var(--warn)}
+  .mermaid{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
+  footer{padding:34px 0;color:var(--mut);font-size:14px}
+  .note{background:#eff4ff;border:1px solid #dbe6ff;border-radius:12px;padding:14px 16px;color:#1e3a8a;font-size:14.5px}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <div class="logo"><span class="dot">D</span> DAU Exam</div>
+    <nav class="links">
+      <a href="#gioi-thieu">Giới thiệu</a>
+      <a href="#tinh-nang">Tính năng</a>
+      <a href="#vaitro">Vai trò</a>
+      <a href="#cauhoi">Loại câu hỏi</a>
+      <a href="#kientruc">Kiến trúc</a>
+      <a href="#caidat">Cài đặt</a>
+      <a href="#kiemthu">Kiểm thử</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <h1>Hệ thống <span class="g">Thi trắc nghiệm trực tuyến</span><br/>Đại học Kiến trúc Đà Nẵng</h1>
+    <p class="sub">Nền tảng tổ chức thi trắc nghiệm online: sinh viên làm bài trên trình duyệt, hệ thống
+      <b>tự chấm</b> và trả kết quả; giám thị <b>giám sát</b> phòng thi; khảo thí <b>quản lý đề, công bố điểm và báo cáo</b>.
+      Nội dung câu hỏi tích hợp từ hệ <b>KT&amp;ĐBCL (exam-core)</b>.</p>
+    <div class="badges">
+      <span class="badge b">NestJS 11</span>
+      <span class="badge b">Next.js 16 · React 19</span>
+      <span class="badge b">Prisma 7 · PostgreSQL</span>
+      <span class="badge b">Docker</span>
+      <span class="badge g">BE 160 + e2e 13 + UAT Postgres</span>
+      <span class="badge g">FE 77 test · CI xanh</span>
+    </div>
+    <div class="cta">
+      <a class="btn p" href="#caidat">🚀 Cài đặt &amp; chạy</a>
+      
+    </div>
+  </div>
+</div>
+
+<!-- GIỚI THIỆU -->
+<section id="gioi-thieu"><div class="wrap">
+  <h2>Giới thiệu</h2>
+  <p class="lead">Phần mềm <b>giao đề – làm bài – chấm – trả kết quả</b> cho kỳ thi trắc nghiệm.
+    Phần nội dung/đáp án do hệ exam-core cung cấp; hệ thống này lo toàn bộ trải nghiệm thi và vận hành tối thiểu.</p>
+  <div class="grid g3">
+    <div class="card"><h4><span class="ic i-blue">🎯</span>Mục tiêu</h4><p>Thi trắc nghiệm online tin cậy: tự chấm, lưu bài an toàn, khôi phục khi sự cố, công bố điểm minh bạch.</p></div>
+    <div class="card"><h4><span class="ic i-violet">🧩</span>Tích hợp</h4><p>Adapter <i>contract-first</i> tới exam-core (đề/đáp án) &amp; đăng nhập đối tác — chỉ cần token là chạy thật.</p></div>
+    <div class="card"><h4><span class="ic i-green">🛡️</span>An toàn bài làm</h4><p>Lưu cục bộ (IndexedDB) + server, đồng bộ định kỳ, tự nộp khi hết giờ, khôi phục cross-máy.</p></div>
+  </div>
+</div></section>
+
+<!-- TÍNH NĂNG -->
+<section id="tinh-nang"><div class="wrap">
+  <h2>Tính năng nổi bật</h2>
+  <p class="lead">Đầy đủ vòng đời một kỳ thi, đã kiểm thử end-to-end trên cơ sở dữ liệu thật.</p>
+  <div class="grid g2">
+    <div class="card"><h4><span class="ic i-blue">📝</span>Làm bài đa dạng</h4><p>10 loại câu hỏi, hỗ trợ định dạng văn bản &amp; công thức toán (KaTeX), hình/âm thanh/video.</p></div>
+    <div class="card"><h4><span class="ic i-green">⚡</span>Tự chấm + chấm tay</h4><p>Chấm tự động (kèm <i>partial credit</i>); câu tự luận khảo thí chấm tay, tự cộng lại tổng điểm.</p></div>
+    <div class="card"><h4><span class="ic i-amber">⏱️</span>Tự lưu &amp; khôi phục</h4><p>Lưu liên tục; mất mạng/đổi máy vẫn tiếp tục đúng tiến độ và thời gian còn lại; hết giờ tự nộp.</p></div>
+    <div class="card"><h4><span class="ic i-rose">👁️</span>Giám sát thật</h4><p>Phòng thi = 20 tài khoản SV; theo dõi đang làm/đã nộp/điểm; cấp lại mật khẩu, đổi máy.</p></div>
+    <div class="card"><h4><span class="ic i-violet">📊</span>Báo cáo &amp; công bố</h4><p>Điểm TB, tỉ lệ đạt, phổ điểm, xuất CSV; cấu hình hiện/ẩn điểm và công bố theo từng đề.</p></div>
+    <div class="card"><h4><span class="ic i-blue">🗓️</span>Lịch thi &amp; phân công</h4><p>Quản lý phòng/ca thi, phân công giám thị vào phòng (dữ liệu thật).</p></div>
+  </div>
+</div></section>
+
+<!-- VAI TRÒ -->
+<section id="vaitro"><div class="wrap">
+  <h2>Bốn vai trò</h2>
+  <p class="lead">Phân quyền chặt theo vai trò (RolesGuard); điều hướng đúng trang chủ khi đăng nhập.</p>
+  <table>
+    <tr><th>Vai trò</th><th>Mã</th><th>Làm gì</th></tr>
+    <tr><td>Sinh viên</td><td><code>STUDENT</code></td><td>Vào thi, làm bài, xem kết quả khi được công bố</td></tr>
+    <tr><td>Giám thị</td><td><code>INVIGILATOR</code></td><td>Theo dõi phòng thi, cấp lại mật khẩu (= mã SV), đổi máy/khôi phục phiên</td></tr>
+    <tr><td>Khảo thí</td><td><code>EXAM_OFFICER</code></td><td>Quản đề, cấu hình, công bố điểm, bài làm, báo cáo, chấm tự luận, phân công</td></tr>
+    <tr><td>Quản trị</td><td><code>ADMIN</code></td><td>Như khảo thí + quản trị hệ thống</td></tr>
+  </table>
+</div></section>
+
+<!-- LOẠI CÂU HỎI -->
+<section id="cauhoi"><div class="wrap">
+  <h2>Các loại câu hỏi hỗ trợ</h2>
+  <p class="lead">Phần mềm render + chấm; nội dung do exam-core soạn.</p>
+  <div class="grid g3">
+    <div class="card"><h4>🔘 Một / Nhiều đáp án</h4><p>Trắc nghiệm chuẩn, hỗ trợ partial credit.</p></div>
+    <div class="card"><h4>✅ Đúng / Sai</h4><p>True/False.</p></div>
+    <div class="card"><h4>✍️ Điền khuyết / Điền giá trị</h4><p>So khớp text / so sánh số (tự chấm).</p></div>
+    <div class="card"><h4>📄 Tự luận</h4><p>Ô nhập bài viết; khảo thí chấm tay.</p></div>
+    <div class="card"><h4>🔗 Đối sánh / Sắp thứ tự / Phân loại</h4><p>Gán mục→đích; chấm theo tỉ lệ đúng.</p></div>
+    <div class="card"><h4>🖱️ Chọn vùng ảnh (Hot Area)</h4><p>Click vào ảnh; chấm theo vùng đúng.</p></div>
+  </div>
+  <div class="note" style="margin-top:18px">Hỗ trợ <b>định dạng văn bản (B/I/U) + công thức toán LaTeX (KaTeX)</b> trong câu hỏi &amp; đáp án, kèm media hình/âm thanh/video.</div>
+</div></section>
+
+<!-- QUY TRÌNH -->
+<section id="quytrinh"><div class="wrap">
+  <h2>Quy trình thi</h2>
+  <p class="lead">Từ chuẩn bị đề đến trả kết quả.</p>
+  <div class="mermaid">
+flowchart TD
+  A([Khảo thí: tạo/cấu hình đề]) --> B([Phân công giám thị + phòng])
+  B --> C([Sinh viên đăng nhập])
+  C --> D([Vào thi: nhận đề + snapshot])
+  D --> E([Làm bài: tự lưu liên tục])
+  E --> F([Nộp bài])
+  F --> G{Tự chấm}
+  G -->|Trắc nghiệm| H([Có điểm ngay])
+  G -->|Tự luận| I([Khảo thí chấm tay])
+  H --> J([Công bố]) --> K([SV xem kết quả])
+  I --> J
+  </div>
+</div></section>
+
+<!-- KIẾN TRÚC -->
+<section id="kientruc"><div class="wrap">
+  <h2>Kiến trúc &amp; Công nghệ</h2>
+  <p class="lead">Monorepo: backend NestJS + frontend Next.js, dữ liệu Postgres qua Prisma, đóng gói Docker.</p>
+  <div class="grid g2">
+    <div class="card"><h4><span class="ic i-rose">⚙️</span>Backend</h4>
+      <p>NestJS 11 · TypeScript · Prisma 7 ORM · PostgreSQL 16 · JWT auth · Swagger (<code>/api/docs</code>) · Cron tự nộp bài.</p></div>
+    <div class="card"><h4><span class="ic i-blue">🖥️</span>Frontend</h4>
+      <p>Next.js 16 · React 19 · Tailwind v4 · IndexedDB (Dexie) lưu offline · KaTeX · DOMPurify.</p></div>
+    <div class="card"><h4><span class="ic i-violet">🔌</span>Tích hợp</h4>
+      <p>Adapter exam-core (cờ <code>EXAM_SOURCE</code>) &amp; đăng nhập đối tác (<code>AUTH_SOURCE</code>) — contract-first, lật cờ là chạy thật.</p></div>
+    <div class="card"><h4><span class="ic i-green">✅</span>Chất lượng</h4>
+      <p>CI gác cổng (lint · typecheck · test · <b>UAT e2e Postgres thật</b>). Quy ước Conventional Commits + PR.</p></div>
+  </div>
+  <h3>Cấu trúc thư mục</h3>
+<pre><code>caira-khaothi-test/
+├── backend/        # NestJS API (auth, exams, attempts, invigilator,
+│   │               #   reporting, scheduling, exam-core…)
+│   └── prisma/     # schema + seed (dữ liệu mẫu)
+├── frontend/       # Next.js (trang thi, kết quả, admin, giám thị)
+├── mock-api/       # fixtures câu hỏi (khi chạy chế độ demo)
+├── docs/           # tài liệu (SRS, use-case, hướng dẫn, go-live, trang này)
+└── docker-compose.yml</code></pre>
+</div></section>
+
+<!-- CÀI ĐẶT -->
+<section id="caidat"><div class="wrap">
+  <h2>Cài đặt &amp; chạy</h2>
+  <p class="lead">Nhanh nhất bằng Docker — <b>tự tạo schema + nạp dữ liệu mẫu</b> (6 đề + phòng/ca).</p>
+  <h3>Cách 1 — Docker (khuyến nghị)</h3>
+<pre><code>git clone https://github.com/niitbeo/caira-khaothi-test.git
+cd caira-khaothi-test
+docker compose up          # tự generate → db push → seed → chạy</code></pre>
+  <p style="color:var(--mut);font-size:14.5px">Frontend: <code>http://localhost:3002</code> · API: <code>http://localhost:3001</code> · Swagger: <code>/api/docs</code></p>
+  <h3>Cách 2 — Chạy thủ công</h3>
+<pre><code>npm run install:all
+cp backend/.env.example backend/.env
+npm run prisma:generate &amp;&amp; npm run prisma:migrate
+cd backend &amp;&amp; npm run seed &amp;&amp; cd ..   # nạp dữ liệu mẫu
+npm run dev</code></pre>
+  <div class="note"><b>Tài khoản demo:</b> gõ <code>sv001</code>…<code>sv020</code> (sinh viên), tên có <code>giamthi</code> (giám thị), <code>khaothi</code> (khảo thí) — hệ thống tự tạo khi đăng nhập. <b>Dữ liệu</b> không nằm trong repo mà do script seed tái tạo.</div>
+  <h3>Triển khai thật</h3>
+  <p style="color:var(--mut);font-size:14.5px">Xem Checklist Go-live + <code>backend/.env.production.example</code>: điền secrets thật, token exam-core/auth, Postgres production, build &amp; HTTPS.</p>
+</div></section>
+
+<!-- KIỂM THỬ -->
+<section id="kiemthu"><div class="wrap">
+  <h2>Kiểm thử &amp; CI</h2>
+  <p class="lead">Mọi PR đều qua cổng CI tự động.</p>
+  <table>
+    <tr><th>Tầng</th><th>Phạm vi</th><th>Trạng thái</th></tr>
+    <tr><td>Backend Unit (Jest)</td><td>Grading, lifecycle, scoring, exam-core mapper…</td><td><span class="pill ok">160 pass</span></td></tr>
+    <tr><td>Integration (Supertest)</td><td>Luồng thi qua HTTP (Prisma mock)</td><td><span class="pill ok">13 pass</span></td></tr>
+    <tr><td>UAT e2e Postgres THẬT</td><td>Đăng nhập→thi→chấm→kết quả trên DB thật trong CI</td><td><span class="pill ok">pass</span></td></tr>
+    <tr><td>Frontend (Vitest)</td><td>Component, hook, panel khảo thí</td><td><span class="pill ok">77 pass</span></td></tr>
+  </table>
+  <h3>Đã verify nghiệp vụ (trên DB thật)</h3>
+  <ul class="clean">
+    <li>Lưu đáp án phân dạng (click tức thì / gõ text debounce) + khôi phục cross-máy.</li>
+    <li>Tự động nộp bài khi hết giờ (cron) + tự chấm.</li>
+    <li>Chặn quá số lần thi (maxAttempt); trộn câu/đáp án vẫn chấm đúng.</li>
+    <li>Hiện/ẩn điểm + công bố: sinh viên chỉ xem được khi đã công bố.</li>
+  </ul>
+</div></section>
+
+<!-- TÀI LIỆU -->
+<section id="tailieu"><div class="wrap">
+  <h2>Tài liệu</h2>
+  <p class="lead">Bộ tài liệu chi tiết trong thư mục <code>docs/</code>.</p>
+  <div class="grid g3">
+    <div class="card"><h4>📘 Hướng dẫn sử dụng</h4><p>19-huong-dan-su-dung.md — theo 3 vai trò.</p></div>
+    <div class="card"><h4>🚀 Go-live</h4><p>20-go-live-checklist.md — checklist + deploy.</p></div>
+    <div class="card"><h4>🔌 Tích hợp</h4><p>exam-core · auth.</p></div>
+    <div class="card"><h4>📐 Phân tích</h4><p>SRS, use-case, ERD, user story, acceptance criteria (00–16).</p></div>
+    <div class="card"><h4>🧪 QC</h4><p>Test report &amp; bug tickets (<code>docs/bugs/</code>).</p></div>
+    <div class="card"><h4>🎨 Thiết kế</h4><p>Design system &amp; frontend guidelines (09, 12).</p></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <b>Hệ thống Thi trắc nghiệm DAU</b> — Trường Đại học Kiến trúc Đà Nẵng · 566 Núi Thành, Hải Châu, Đà Nẵng.<br/>
+  Trang tài liệu tổng quan dự án
+</div></footer>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad:true, theme:'default', flowchart:{curve:'basis'} });
+</script>
+</body>
+</html>

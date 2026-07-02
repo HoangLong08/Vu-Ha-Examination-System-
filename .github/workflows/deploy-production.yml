@@ -1,0 +1,245 @@
+# =================================================
+# Deploy to Production
+# Manual trigger only (workflow_dispatch) — main branch
+# Includes full test suite + approval gate
+# =================================================
+
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "deploy" to confirm production deployment'
+        required: true
+        type: string
+      skip-tests:
+        description: 'Skip test suite (emergency hotfix only)'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository }}
+
+jobs:
+  # ─────────────────────────────────────────────
+  # Validation Gate
+  # ─────────────────────────────────────────────
+  validate:
+    name: Validate Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify confirmation
+        run: |
+          if [[ "${{ github.event.inputs.confirm }}" != "deploy" ]]; then
+            echo "❌ Deployment not confirmed. You must type 'deploy' to proceed."
+            exit 1
+          fi
+
+      - name: Verify branch
+        run: |
+          if [[ "${{ github.ref }}" != "refs/heads/main" ]]; then
+            echo "❌ Production deploys only allowed from 'main' branch"
+            echo "   Current branch: ${{ github.ref }}"
+            exit 1
+          fi
+          echo "✅ Deploying from main branch"
+
+  # ─────────────────────────────────────────────
+  # Run Full Test Suite
+  # ─────────────────────────────────────────────
+  test:
+    name: Full Test Suite
+    runs-on: ubuntu-latest
+    needs: validate
+    if: ${{ github.event.inputs.skip-tests != 'true' }}
+    strategy:
+      matrix:
+        project: [backend, frontend]
+    defaults:
+      run:
+        working-directory: ${{ matrix.project }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: ${{ matrix.project }}/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        if: matrix.project == 'backend'
+        run: npx prisma generate
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type Check
+        run: npx tsc --noEmit
+
+      - name: Unit Tests
+        run: npm test -- --passWithNoTests
+        env:
+          NODE_ENV: test
+
+  # ─────────────────────────────────────────────
+  # Build & Push Production Images
+  # ─────────────────────────────────────────────
+  build-images:
+    name: Build Production Images
+    runs-on: ubuntu-latest
+    needs: [validate, test]
+    if: |
+      always() &&
+      needs.validate.result == 'success' &&
+      (needs.test.result == 'success' || needs.test.result == 'skipped')
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - project: backend
+            dockerfile: backend/Dockerfile
+            image-name: backend
+          - project: frontend
+            dockerfile: frontend/Dockerfile
+            image-name: frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/${{ matrix.image-name }}
+          tags: |
+            type=sha,prefix=prod-
+            type=raw,value=production-latest
+            type=raw,value=v${{ github.run_number }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NODE_ENV=production
+
+  # ─────────────────────────────────────────────
+  # Deploy to Production
+  # ─────────────────────────────────────────────
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build-images
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_URL }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create database backup
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          script: |
+            cd ${{ vars.PRODUCTION_DEPLOY_PATH }}
+            # Backup database before deployment
+            docker compose -f docker-compose.prod.yml exec -T postgres \
+              pg_dump -U ${{ secrets.DB_USER }} ${{ secrets.DB_NAME }} \
+              > backups/backup-$(date +%Y%m%d-%H%M%S).sql
+            echo "✅ Database backup created"
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          script: |
+            cd ${{ vars.PRODUCTION_DEPLOY_PATH }}
+
+            # Pull latest production images
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker compose -f docker-compose.prod.yml pull
+
+            # Deploy with zero-downtime
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+
+            # Run database migrations
+            docker compose -f docker-compose.prod.yml exec -T backend npx prisma migrate deploy
+
+            # Health check
+            sleep 15
+            curl -f http://localhost:3001/api/health || exit 1
+
+            # Cleanup old images
+            docker image prune -f
+
+            echo "✅ Production deployment complete — v${{ github.run_number }}"
+
+      - name: Create deployment tag
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tag = `deploy-prod-v${{ github.run_number }}`;
+            await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/tags/${tag}`,
+              sha: context.sha
+            });
+            console.log(`✅ Created tag: ${tag}`);
+
+  # ─────────────────────────────────────────────
+  # Post-Deploy
+  # ─────────────────────────────────────────────
+  post-deploy:
+    name: Post-Deployment
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: always()
+    steps:
+      - name: Deployment summary
+        run: |
+          echo "## 🚀 Production Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Field | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Status** | ${{ needs.deploy.result == 'success' && '✅ Success' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Version** | v${{ github.run_number }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Commit** | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Triggered by** | @${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **URL** | ${{ vars.PRODUCTION_URL }} |" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,14 @@
+node_modules
+.next
+.git
+.gitignore
+.env
+.env.local
+.DS_Store
+*.md
+!README.md
+coverage
+mockups
+docker-compose*
+Dockerfile
+.dockerignore

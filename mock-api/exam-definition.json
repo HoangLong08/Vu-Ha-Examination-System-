@@ -1,0 +1,79 @@
+{
+  "id": "ed000001-1111-4aaa-bbbb-ccccddddeeee",
+  "createdAt": "2026-05-15T08:00:00.000Z",
+  "updatedAt": "2026-06-10T14:00:00.000Z",
+  "deletedAt": null,
+  "code": "CSLT-2026-HK2",
+  "title": "Thi cuối kỳ Cơ sở lập trình - Học kỳ 2 (DAU)",
+  "subjectCode": "CS101",
+  "subjectName": "Cơ sở lập trình",
+  "examTermId": "et000001-aaaa-4bbb-cccc-ddddeeee0001",
+  "examTermName": "Thi cuối kỳ - Học kỳ 2 năm 2025-2026",
+  "matrixId": "mx000001-aaaa-4bbb-cccc-dddd00000001",
+  "questionBankId": "qb000001-aaaa-4bbb-cccc-ddddeeee0001",
+  "durationMinutes": 60,
+  "totalQuestions": 40,
+  "maxScore": 10.0,
+  "scorePerQuestion": 0.25,
+  "examType": "CUOI_KY",
+  "gradingRule": "PARTIAL_CREDIT",
+  "gradingRuleDescription": "Tính điểm từng phần: Đúng ý nào được điểm ý đó, sai không trừ điểm.",
+  "status": "DA_DUYET",
+  "createdBy": {
+    "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+    "email": "tranthimai@dau.edu.vn",
+    "firstName": "Mai",
+    "lastName": "Trần Thị"
+  },
+  "examStructure": {
+    "difficultyDistribution": {
+      "DE": {
+        "targetCount": 20,
+        "description": "Câu hỏi nhận biết, thông hiểu cơ bản"
+      },
+      "TRUNG_BINH": {
+        "targetCount": 12,
+        "description": "Câu hỏi vận dụng thấp, yêu cầu tư duy thuật toán ngắn"
+      },
+      "KHO": {
+        "targetCount": 8,
+        "description": "Câu hỏi vận dụng cao, tối ưu hóa thuật toán và gỡ lỗi nâng cao"
+      }
+    },
+    "sections": [
+      {
+        "id": "sec00001-1111-4aaa-bbbb-ccccdddd0001",
+        "sectionName": "Biến, Kiểu dữ liệu và Phép toán",
+        "sectionOrder": 1,
+        "totalQuestions": 10,
+        "distribution": {
+          "DE": 8,
+          "TRUNG_BINH": 2,
+          "KHO": 0
+        }
+      },
+      {
+        "id": "sec00001-1111-4aaa-bbbb-ccccdddd0002",
+        "sectionName": "Cấu trúc rẽ nhánh (if-else, switch-case) và Vòng lặp (for, while)",
+        "sectionOrder": 2,
+        "totalQuestions": 15,
+        "distribution": {
+          "DE": 8,
+          "TRUNG_BINH": 5,
+          "KHO": 2
+        }
+      },
+      {
+        "id": "sec00001-1111-4aaa-bbbb-ccccdddd0003",
+        "sectionName": "Hàm, Mảng và Con trỏ",
+        "sectionOrder": 3,
+        "totalQuestions": 15,
+        "distribution": {
+          "DE": 4,
+          "TRUNG_BINH": 5,
+          "KHO": 6
+        }
+      }
+    ]
+  }
+}

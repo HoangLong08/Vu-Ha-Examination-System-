@@ -1,0 +1,75 @@
+# ============================================
+# DAU Examination System — .gitignore
+# Monorepo: Next.js (frontend) + NestJS (backend)
+# ============================================
+
+# ---- Dependencies ----
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# ---- Build Artifacts ----
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# ---- Environment Variables ----
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+# Keep example env files
+!.env.example
+
+# ---- Testing & Coverage ----
+coverage/
+*.lcov
+.nyc_output/
+
+# ---- Prisma ----
+# Generated Prisma client (regenerated on install)
+**/generated/prisma/
+
+# ---- Logs ----
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---- OS Files ----
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ---- IDE / Editor ----
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# ---- Docker ----
+docker-compose.override.yml
+
+# ---- Misc ----
+*.tgz
+.cache/
+.parcel-cache/
+.turbo/
+.vercel/
+
+# ---- Debug ----
+.eslintcache

@@ -1,0 +1,112 @@
+{
+  "data": [
+    {
+      "id": "qb000001-aaaa-4bbb-cccc-ddddeeee0001",
+      "createdAt": "2026-02-01T08:00:00.000Z",
+      "updatedAt": "2026-06-01T14:00:00.000Z",
+      "deletedAt": null,
+      "code": "NH-CSLT-001",
+      "name": "Ngân hàng câu hỏi - Cơ sở lập trình (CS101)",
+      "courseId": "course001-aaaa-4bbb-cccc-ddddeeee0001",
+      "courseName": "Cơ sở lập trình",
+      "courseCode": "CS101",
+      "examFormat": "TRAC_NGHIEM",
+      "status": "NGHIEM_THU",
+      "totalQuestions": 120,
+      "questionStats": {
+        "DE": 60,
+        "TRUNG_BINH": 36,
+        "KHO": 24
+      },
+      "typeStats": {
+        "TRAC_NGHIEM_1": 72,
+        "TRAC_NGHIEM_N": 30,
+        "DUNG_SAI": 18
+      },
+      "sections": [
+        {
+          "id": "sec00001-1111-4aaa-bbbb-ccccdddd0001",
+          "name": "Biến, Kiểu dữ liệu và Phép toán",
+          "order": 1,
+          "totalQuestions": 35
+        },
+        {
+          "id": "sec00001-1111-4aaa-bbbb-ccccdddd0002",
+          "name": "Cấu trúc rẽ nhánh (if-else, switch-case) và Vòng lặp (for, while)",
+          "order": 2,
+          "totalQuestions": 45
+        },
+        {
+          "id": "sec00001-1111-4aaa-bbbb-ccccdddd0003",
+          "name": "Hàm, Mảng và Con trỏ",
+          "order": 3,
+          "totalQuestions": 40
+        }
+      ],
+      "createdBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      }
+    },
+    {
+      "id": "qb000002-aaaa-4bbb-cccc-ddddeeee0002",
+      "createdAt": "2026-01-15T08:00:00.000Z",
+      "updatedAt": "2026-05-20T10:00:00.000Z",
+      "deletedAt": null,
+      "code": "NH-KTDL-001",
+      "name": "Ngân hàng câu hỏi - Kiến trúc dữ liệu (CS201)",
+      "courseId": "course001-aaaa-4bbb-cccc-ddddeeee0002",
+      "courseName": "Kiến trúc dữ liệu",
+      "courseCode": "CS201",
+      "examFormat": "TRAC_NGHIEM",
+      "status": "BIEN_SOAN",
+      "totalQuestions": 80,
+      "questionStats": {
+        "DE": 40,
+        "TRUNG_BINH": 25,
+        "KHO": 15
+      },
+      "typeStats": {
+        "TRAC_NGHIEM_1": 50,
+        "TRAC_NGHIEM_N": 20,
+        "DUNG_SAI": 10
+      },
+      "sections": [
+        {
+          "id": "sec00002-1111-4aaa-bbbb-ccccdddd0001",
+          "name": "Mảng, Danh sách liên kết",
+          "order": 1,
+          "totalQuestions": 30
+        },
+        {
+          "id": "sec00002-1111-4aaa-bbbb-ccccdddd0002",
+          "name": "Ngăn xếp, Hàng đợi",
+          "order": 2,
+          "totalQuestions": 25
+        },
+        {
+          "id": "sec00002-1111-4aaa-bbbb-ccccdddd0003",
+          "name": "Cây, Đồ thị",
+          "order": 3,
+          "totalQuestions": 25
+        }
+      ],
+      "createdBy": {
+        "id": "a1b2c3d4-5678-4e0f-b2c3-d4e5f6a78902",
+        "email": "levantuan@dau.edu.vn",
+        "firstName": "Tuấn",
+        "lastName": "Lê Văn"
+      }
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "take": 10,
+    "itemCount": 2,
+    "pageCount": 1,
+    "hasPreviousPage": false,
+    "hasNextPage": false
+  }
+}

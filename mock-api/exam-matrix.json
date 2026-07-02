@@ -1,0 +1,212 @@
+{
+  "data": [
+    {
+      "id": "mx000001-aaaa-4bbb-cccc-dddd00000001",
+      "createdAt": "2026-05-10T08:00:00.000Z",
+      "updatedAt": "2026-06-05T14:00:00.000Z",
+      "deletedAt": null,
+      "code": "MT-CSLT-001",
+      "name": "Ma trận đề - Cơ sở lập trình CK HK2 2025-2026",
+      "version": 1,
+      "courseId": "course001-aaaa-4bbb-cccc-ddddeeee0001",
+      "courseName": "Cơ sở lập trình",
+      "courseCode": "CS101",
+      "bankId": "qb000001-aaaa-4bbb-cccc-ddddeeee0001",
+      "bankName": "Ngân hàng câu hỏi - Cơ sở lập trình (CS101)",
+      "examType": "CUOI_KY",
+      "status": "DA_DUYET",
+      "totalQuestions": 40,
+      "totalScore": 10.0,
+      "scorePerQuestion": 0.25,
+      "durationMinutes": 60,
+      "gradingRule": "PARTIAL_CREDIT",
+      "cells": [
+        {
+          "id": "cell0001-aaaa-4bbb-cccc-dddd00000001",
+          "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0001",
+          "sectionName": "Biến, Kiểu dữ liệu và Phép toán",
+          "difficulty": "DE",
+          "questionType": "TRAC_NGHIEM_1",
+          "questionCount": 6,
+          "scorePerQuestion": 0.25,
+          "subtotal": 1.5,
+          "availableInBank": 20
+        },
+        {
+          "id": "cell0001-aaaa-4bbb-cccc-dddd00000002",
+          "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0001",
+          "sectionName": "Biến, Kiểu dữ liệu và Phép toán",
+          "difficulty": "DE",
+          "questionType": "DUNG_SAI",
+          "questionCount": 2,
+          "scorePerQuestion": 0.25,
+          "subtotal": 0.5,
+          "availableInBank": 8
+        },
+        {
+          "id": "cell0001-aaaa-4bbb-cccc-dddd00000003",
+          "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0001",
+          "sectionName": "Biến, Kiểu dữ liệu và Phép toán",
+          "difficulty": "TRUNG_BINH",
+          "questionType": "TRAC_NGHIEM_1",
+          "questionCount": 2,
+          "scorePerQuestion": 0.25,
+          "subtotal": 0.5,
+          "availableInBank": 6
+        },
+        {
+          "id": "cell0001-aaaa-4bbb-cccc-dddd00000004",
+          "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0002",
+          "sectionName": "Cấu trúc rẽ nhánh và Vòng lặp",
+          "difficulty": "DE",
+          "questionType": "TRAC_NGHIEM_1",
+          "questionCount": 6,
+          "scorePerQuestion": 0.25,
+          "subtotal": 1.5,
+          "availableInBank": 18
+        },
+        {
+          "id": "cell0001-aaaa-4bbb-cccc-dddd00000005",
+          "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0002",
+          "sectionName": "Cấu trúc rẽ nhánh và Vòng lặp",
+          "difficulty": "DE",
+          "questionType": "DUNG_SAI",
+          "questionCount": 2,
+          "scorePerQuestion": 0.25,
+          "subtotal": 0.5,
+          "availableInBank": 6
+        },
+        {
+          "id": "cell0001-aaaa-4bbb-cccc-dddd00000006",
+          "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0002",
+          "sectionName": "Cấu trúc rẽ nhánh và Vòng lặp",
+          "difficulty": "TRUNG_BINH",
+          "questionType": "TRAC_NGHIEM_1",
+          "questionCount": 3,
+          "scorePerQuestion": 0.25,
+          "subtotal": 0.75,
+          "availableInBank": 10
+        },
+        {
+          "id": "cell0001-aaaa-4bbb-cccc-dddd00000007",
+          "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0002",
+          "sectionName": "Cấu trúc rẽ nhánh và Vòng lặp",
+          "difficulty": "TRUNG_BINH",
+          "questionType": "TRAC_NGHIEM_N",
+          "questionCount": 2,
+          "scorePerQuestion": 0.25,
+          "subtotal": 0.5,
+          "availableInBank": 5
+        },
+        {
+          "id": "cell0001-aaaa-4bbb-cccc-dddd00000008",
+          "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0002",
+          "sectionName": "Cấu trúc rẽ nhánh và Vòng lặp",
+          "difficulty": "KHO",
+          "questionType": "TRAC_NGHIEM_1",
+          "questionCount": 2,
+          "scorePerQuestion": 0.25,
+          "subtotal": 0.5,
+          "availableInBank": 4
+        },
+        {
+          "id": "cell0001-aaaa-4bbb-cccc-dddd00000009",
+          "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0003",
+          "sectionName": "Hàm, Mảng và Con trỏ",
+          "difficulty": "DE",
+          "questionType": "TRAC_NGHIEM_1",
+          "questionCount": 4,
+          "scorePerQuestion": 0.25,
+          "subtotal": 1.0,
+          "availableInBank": 12
+        },
+        {
+          "id": "cell0001-aaaa-4bbb-cccc-dddd00000010",
+          "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0003",
+          "sectionName": "Hàm, Mảng và Con trỏ",
+          "difficulty": "TRUNG_BINH",
+          "questionType": "TRAC_NGHIEM_1",
+          "questionCount": 3,
+          "scorePerQuestion": 0.25,
+          "subtotal": 0.75,
+          "availableInBank": 8
+        },
+        {
+          "id": "cell0001-aaaa-4bbb-cccc-dddd00000011",
+          "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0003",
+          "sectionName": "Hàm, Mảng và Con trỏ",
+          "difficulty": "TRUNG_BINH",
+          "questionType": "TRAC_NGHIEM_N",
+          "questionCount": 2,
+          "scorePerQuestion": 0.25,
+          "subtotal": 0.5,
+          "availableInBank": 5
+        },
+        {
+          "id": "cell0001-aaaa-4bbb-cccc-dddd00000012",
+          "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0003",
+          "sectionName": "Hàm, Mảng và Con trỏ",
+          "difficulty": "KHO",
+          "questionType": "TRAC_NGHIEM_1",
+          "questionCount": 4,
+          "scorePerQuestion": 0.25,
+          "subtotal": 1.0,
+          "availableInBank": 6
+        },
+        {
+          "id": "cell0001-aaaa-4bbb-cccc-dddd00000013",
+          "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0003",
+          "sectionName": "Hàm, Mảng và Con trỏ",
+          "difficulty": "KHO",
+          "questionType": "TRAC_NGHIEM_N",
+          "questionCount": 2,
+          "scorePerQuestion": 0.25,
+          "subtotal": 0.5,
+          "availableInBank": 3
+        }
+      ],
+      "summary": {
+        "bySectionDistribution": [
+          { "section": "Biến, Kiểu dữ liệu và Phép toán", "count": 10, "score": 2.5 },
+          { "section": "Cấu trúc rẽ nhánh và Vòng lặp", "count": 15, "score": 3.75 },
+          { "section": "Hàm, Mảng và Con trỏ", "count": 15, "score": 3.75 }
+        ],
+        "byDifficultyDistribution": [
+          { "difficulty": "DE", "count": 20, "score": 5.0, "percentage": 50 },
+          { "difficulty": "TRUNG_BINH", "count": 12, "score": 3.0, "percentage": 30 },
+          { "difficulty": "KHO", "count": 8, "score": 2.0, "percentage": 20 }
+        ],
+        "byTypeDistribution": [
+          { "type": "TRAC_NGHIEM_1", "count": 28, "label": "Trắc nghiệm 1 đáp án" },
+          { "type": "TRAC_NGHIEM_N", "count": 6, "label": "Trắc nghiệm nhiều đáp án" },
+          { "type": "DUNG_SAI", "count": 6, "label": "Đúng/Sai" }
+        ],
+        "totalQuestions": 40,
+        "totalScore": 10.0,
+        "isValid": true,
+        "validationMessage": "Tổng số câu (40) và tổng điểm (10.0) khớp với cấu hình đề thi."
+      },
+      "approvedBy": {
+        "id": "d5e6f7a8-b9c0-4d1e-f2a3-b4c5d6e7f890",
+        "email": "phamvanhung@dau.edu.vn",
+        "firstName": "Hùng",
+        "lastName": "Phạm Văn"
+      },
+      "approvedAt": "2026-06-05T14:00:00.000Z",
+      "createdBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      }
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "take": 10,
+    "itemCount": 1,
+    "pageCount": 1,
+    "hasPreviousPage": false,
+    "hasNextPage": false
+  }
+}
