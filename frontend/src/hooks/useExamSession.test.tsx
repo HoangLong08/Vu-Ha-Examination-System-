@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 
 import {
@@ -269,5 +269,163 @@ describe('useAutoSave', () => {
 
     expect(api.autosaveAnswers).toHaveBeenCalledTimes(1);
     expect(idb.markSynced).not.toHaveBeenCalled();
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Regression: once submit() starts (manual or timer auto-submit), the FE must
+// stop sending answer mutations. The backend rejects late POST /answers with
+// 400 "Attempt is SUBMITTED" — that race is now expected and must be silent.
+// ─────────────────────────────────────────────────────────────────────────────
+describe('useExamSession — no answer mutations survive submit start', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  async function startSession() {
+    (api.startExam as ReturnType<typeof vi.fn>).mockResolvedValue({
+      attemptId: 'attempt-1',
+      startedAt: new Date().toISOString(),
+      remainingSeconds: 60,
+      status: 'IN_PROGRESS',
+      recovered: false,
+    });
+    (api.getAttemptAnswers as ReturnType<typeof vi.fn>).mockResolvedValue([]);
+    (api.getExamQuestions as ReturnType<typeof vi.fn>).mockResolvedValue([]);
+    (idb.getUnsynced as ReturnType<typeof vi.fn>).mockResolvedValue([]);
+    (api.submitAttempt as ReturnType<typeof vi.fn>).mockResolvedValue({
+      attemptId: 'attempt-1',
+      status: 'SUBMITTED',
+      submittedAt: new Date().toISOString(),
+    });
+
+    const { result } = renderHook(() => useExamSession('exam-1'));
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    return result;
+  }
+
+  it('manual submit while a debounced autosave is scheduled: the debounce never fires', async () => {
+    const result = await startSession();
+    (api.saveAnswer as ReturnType<typeof vi.fn>).mockResolvedValue({});
+
+    act(() => {
+      // debounce=true -> queues a 600ms timer instead of saving immediately.
+      result.current.selectAnswer('q1', ['A'], true);
+    });
+    expect(api.saveAnswer).not.toHaveBeenCalled();
+
+    await act(async () => {
+      await result.current.submit();
+    });
+
+    // Advance well past the 600ms debounce window: it must have been cancelled.
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(api.saveAnswer).not.toHaveBeenCalled();
+    expect(api.submitAttempt).toHaveBeenCalledTimes(1);
+  });
+
+  it('timer expiry auto-submit while autosave is scheduled: same guard applies', async () => {
+    const result = await startSession();
+    (api.saveAnswer as ReturnType<typeof vi.fn>).mockResolvedValue({});
+
+    act(() => {
+      result.current.selectAnswer('q1', ['B'], true);
+    });
+
+    // Simulate the countdown hitting zero -> ExamHeader calls the same submit().
+    await act(async () => {
+      await result.current.submit();
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(api.saveAnswer).not.toHaveBeenCalled();
+  });
+
+  it('rapid double-click submit only calls submitAttempt once', async () => {
+    const result = await startSession();
+
+    let resolveSubmit!: (v: unknown) => void;
+    (api.submitAttempt as ReturnType<typeof vi.fn>).mockReturnValue(
+      new Promise((resolve) => {
+        resolveSubmit = resolve;
+      })
+    );
+
+    let p1!: Promise<unknown>;
+    let p2!: Promise<unknown>;
+    act(() => {
+      p1 = result.current.submit();
+      p2 = result.current.submit();
+    });
+
+    resolveSubmit({ attemptId: 'attempt-1', status: 'SUBMITTED' });
+    await act(async () => {
+      await Promise.all([p1, p2]);
+    });
+
+    expect(api.submitAttempt).toHaveBeenCalledTimes(1);
+  });
+
+  it('a save request already in flight when submit begins does not surface a console error on its late 400', async () => {
+    const result = await startSession();
+
+    let rejectSave!: (err: unknown) => void;
+    (api.saveAnswer as ReturnType<typeof vi.fn>).mockReturnValue(
+      new Promise((_resolve, reject) => {
+        rejectSave = reject;
+      })
+    );
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    act(() => {
+      // debounce=false -> fires the save immediately, leaving it "in flight".
+      result.current.selectAnswer('q1', ['A'], false);
+    });
+    expect(api.saveAnswer).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      await result.current.submit();
+    });
+
+    // The in-flight request finally settles AFTER submit began, with the
+    // backend's expected "Attempt is SUBMITTED" rejection.
+    await act(async () => {
+      rejectSave({ response: { status: 400, data: { message: 'Attempt is SUBMITTED, cannot modify' } } });
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
+    expect(api.submitAttempt).toHaveBeenCalledTimes(1);
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('no further POST /answers after submit begins even if selectAnswer is called again', async () => {
+    const result = await startSession();
+    (api.saveAnswer as ReturnType<typeof vi.fn>).mockResolvedValue({});
+
+    await act(async () => {
+      await result.current.submit();
+    });
+
+    act(() => {
+      result.current.selectAnswer('q2', ['C'], false);
+    });
+
+    expect(api.saveAnswer).not.toHaveBeenCalled();
   });
 });

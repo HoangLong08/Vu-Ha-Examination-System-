@@ -149,18 +149,28 @@ export async function getAttemptAnswers(attemptId: string): Promise<AttemptAnswe
 export async function saveAnswer(
   attemptId: string,
   questionId: string,
-  answer: string
+  answer: string,
+  signal?: AbortSignal
 ): Promise<unknown> {
-  const res = await api.post(`/attempts/${attemptId}/answers`, { questionId, answer });
+  const res = await api.post(
+    `/attempts/${attemptId}/answers`,
+    { questionId, answer },
+    { signal }
+  );
   return res.data.data;
 }
 
 /** POST /attempts/:attemptId/autosave → batch persist (offline-recovery sync). */
 export async function autosaveAnswers(
   attemptId: string,
-  items: AutosaveItem[]
+  items: AutosaveItem[],
+  signal?: AbortSignal
 ): Promise<unknown> {
-  const res = await api.post(`/attempts/${attemptId}/autosave`, { answers: items });
+  const res = await api.post(
+    `/attempts/${attemptId}/autosave`,
+    { answers: items },
+    { signal }
+  );
   return res.data.data;
 }
 
