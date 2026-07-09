@@ -204,6 +204,32 @@ describe('AttemptsService — Exam Lifecycle', () => {
       );
       expect(prisma.examAttempt.create).not.toHaveBeenCalled();
     });
+
+    it('trả về message thân thiện và code khi đã hết số lần thi (maxAttempt=1, finishedCount=1)', async () => {
+      prisma.examDefinition.findUnique.mockResolvedValue({
+        id: examDefId,
+        durationMinutes: 60,
+        maxAttempt: 1,
+      });
+      prisma.examAttempt.findFirst.mockResolvedValue(null);
+      prisma.examAttempt.count.mockResolvedValue(1);
+
+      try {
+        await service.startExam(user, examDefId);
+        fail('Expected startExam to throw BadRequestException');
+      } catch (err) {
+        expect(err).toBeInstanceOf(BadRequestException);
+        const response = (err as BadRequestException).getResponse() as {
+          message: string;
+          code: string;
+        };
+        expect(response.message).toBe(
+          'Bạn đã hoàn thành bài thi này và đã sử dụng hết số lần thi được phép.',
+        );
+        expect(response.code).toBe('EXAM_ATTEMPT_LIMIT_REACHED');
+      }
+      expect(prisma.examAttempt.create).not.toHaveBeenCalled();
+    });
   });
 
   // =====================================================================

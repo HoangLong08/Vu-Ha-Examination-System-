@@ -113,6 +113,7 @@ interface ExamSessionState {
   isOnline: boolean;
   loading: boolean;
   error: string | null;
+  errorCode: string | null;
 }
 
 export function useExamSession(examId: string) {
@@ -126,6 +127,7 @@ export function useExamSession(examId: string) {
     isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
     loading: true,
     error: null,
+    errorCode: null,
   });
 
   const attemptIdRef = useRef<string | null>(null);
@@ -219,15 +221,16 @@ export function useExamSession(examId: string) {
         console.error('useExamSession: failed to start exam', err);
         if (cancelled) return;
         // Ưu tiên thông báo nghiệp vụ từ backend (vd hết số lần thi, ngoài dải IP).
-        const apiMsg = (
-          err as { response?: { data?: { message?: string } } }
-        )?.response?.data?.message;
+        const apiData = (
+          err as { response?: { data?: { message?: string; code?: string } } }
+        )?.response?.data;
         setState((prev) => ({
           ...prev,
           loading: false,
           error:
-            apiMsg ||
+            apiData?.message ||
             'Không thể bắt đầu hoặc khôi phục bài thi. Vui lòng thử lại.',
+          errorCode: apiData?.code ?? null,
         }));
       }
     })();
@@ -331,5 +334,6 @@ export function useExamSession(examId: string) {
     submit,
     loading: state.loading,
     error: state.error,
+    errorCode: state.errorCode,
   };
 }
