@@ -129,7 +129,7 @@
       },
       "reviewedAt": "2026-05-21T08:00:00.000Z",
       "content": "Cho hình ảnh sơ đồ con trỏ dưới đây. Đoạn code C nào tương ứng để giải phóng đúng vùng nhớ động hai chiều đã cấp phát?",
-      "mediaUrl": "https://raw.githubusercontent.com/dau-examination/assets/main/pointer-matrix-diagram.png",
+      "mediaUrl": "https://ocd.vn/wp-content/uploads/2025/09/So-do-ma-tran-la-gi.jpg",
       "options": [
         { "key": "A", "value": "free(matrix);" },
         { "key": "B", "value": "for(int i=0; i<rows; i++) free(matrix[i]); free(matrix);" },
