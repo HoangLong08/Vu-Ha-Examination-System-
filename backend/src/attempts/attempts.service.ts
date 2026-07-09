@@ -92,96 +92,118 @@ export class AttemptsService {
       throw new NotFoundException('Exam definition not found');
     }
     const totalSeconds = examDef.durationMinutes * 60;
-
-    // Đã có lượt đang làm -> KHÔI PHỤC (cross-máy): trả lại đúng thời gian còn lại
-    // tính theo đồng hồ server (server là nguồn chân lý).
-    const existing = await this.prisma.examAttempt.findFirst({
-      where: { studentId, examDefinitionId, status: 'IN_PROGRESS' },
-      orderBy: { createdAt: 'desc' },
-    });
-    if (existing) {
-      const elapsed = existing.startedAt
-        ? Math.floor(
-            (Date.now() - new Date(existing.startedAt).getTime()) / 1000,
-          )
-        : 0;
-      return {
-        attemptId: existing.id,
-        startedAt: existing.startedAt,
-        remainingSeconds: Math.max(0, totalSeconds - elapsed),
-        status: existing.status,
-        recovered: true,
-      };
-    }
-
-    // FR-Q-003: chặn khi đã hết số lần thi cho phép (đếm các lượt đã hoàn thành).
-    const finishedCount = await this.prisma.examAttempt.count({
-      where: {
-        studentId,
-        examDefinitionId,
-        status: { in: ['SUBMITTED', 'EXPIRED'] },
-      },
-    });
     const maxAttempt = examDef.maxAttempt ?? 1;
-    if (finishedCount >= maxAttempt) {
-      throw new BadRequestException({
-        message:
-          'Bạn đã hoàn thành bài thi này và đã sử dụng hết số lần thi được phép.',
-        code: 'EXAM_ATTEMPT_LIMIT_REACHED',
-      });
-    }
 
-    // BE-007: gắn attempt với CA THI THẬT (ExamSession qua SessionExam) nếu có,
-    // thay vì để mồ côi / dùng examId làm sessionId. Không có ca -> null (hợp lệ).
-    const sessionLink = await this.prisma.sessionExam.findFirst({
-      where: { examDefinitionId },
-      select: { sessionId: true },
-    });
+    // Toàn bộ "tìm lượt gần nhất -> (khôi phục | tạo lượt mới)" chạy trong 1
+    // transaction, khoá bằng advisory lock theo (studentId, examDefinitionId).
+    // Trước đây bước "tìm" và "tạo" tách rời (2 lệnh await riêng biệt) nên 2
+    // request start() gần như đồng thời (double mount React StrictMode,
+    // double-click nút vào thi, nhiều tab) đều có thể đọc "chưa có lượt nào"
+    // trước khi bên kia kịp ghi -> tạo ra 2 attempt IN_PROGRESS song song cho
+    // cùng 1 sinh viên/đề. Khoá advisory_lock serializes các request này.
+    return this.prisma.$transaction(
+      async (tx) => {
+        await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${studentId} || ${examDefinitionId}, 0))`;
 
-    // Lượt mới: tạo attempt + SNAPSHOT câu hỏi (kèm correctAnswer) vào AttemptQuestion
-    // để chấm điểm chính xác lúc nộp.
-    const now = new Date();
-    const attempt = await this.prisma.examAttempt.create({
-      data: {
-        studentId,
-        examDefinitionId,
-        sessionId: sessionLink?.sessionId ?? null,
-        status: 'IN_PROGRESS',
-        startedAt: now,
-        remainingSeconds: totalSeconds,
-        clientIp,
-        userAgent,
-      },
-    });
+        // Chỉ xét lượt GẦN NHẤT của sinh viên cho đề này — không phải "bất kỳ
+        // lượt IN_PROGRESS nào". Query cũ lọc thẳng theo status: 'IN_PROGRESS'
+        // nên có thể "hồi sinh" một attempt IN_PROGRESS mồ côi/cũ NGAY CẢ KHI
+        // sinh viên đã có lượt MỚI HƠN đã SUBMITTED/EXPIRED — đây chính là bug
+        // cho vào lại bài thi đã nộp. Lấy lượt mới nhất bất kể trạng thái đảm
+        // bảo lượt đã hoàn thành luôn được ưu tiên hơn lượt dở dang cũ hơn.
+        const latest = await tx.examAttempt.findFirst({
+          where: { studentId, examDefinitionId },
+          orderBy: { createdAt: 'desc' },
+        });
 
-    const rawQuestions =
-      await this.examsService.getQuestionsWithAnswers(examDefinitionId);
-    if (rawQuestions.length > 0) {
-      await this.prisma.attemptQuestion.createMany({
-        data: rawQuestions.map((q: any, i: number) => ({
-          attemptId: attempt.id,
-          questionId: String(q.id),
-          questionOrder: i,
-          questionContent: q.content ?? '',
-          questionType: q.type,
-          questionSnapshot: {
-            type: q.type,
-            mediaUrl: q.mediaUrl ?? null,
-            correctAnswer: Array.isArray(q.correctAnswer)
-              ? q.correctAnswer.join(',')
-              : String(q.correctAnswer ?? ''),
+        if (latest && latest.status === 'IN_PROGRESS') {
+          // Đã có lượt đang làm -> KHÔI PHỤC (cross-máy): trả lại đúng thời
+          // gian còn lại tính theo đồng hồ server (server là nguồn chân lý).
+          const elapsed = latest.startedAt
+            ? Math.floor(
+                (Date.now() - new Date(latest.startedAt).getTime()) / 1000,
+              )
+            : 0;
+          return {
+            attemptId: latest.id,
+            startedAt: latest.startedAt,
+            remainingSeconds: Math.max(0, totalSeconds - elapsed),
+            status: latest.status,
+            recovered: true,
+          };
+        }
+
+        // Lượt gần nhất (nếu có) đã SUBMITTED/EXPIRED -> không khôi phục được
+        // nữa. FR-Q-003: chặn khi đã hết số lần thi cho phép.
+        const finishedCount = await tx.examAttempt.count({
+          where: {
+            studentId,
+            examDefinitionId,
+            status: { in: ['SUBMITTED', 'EXPIRED'] },
           },
-        })),
-      });
-    }
+        });
+        if (finishedCount >= maxAttempt) {
+          throw new BadRequestException({
+            message:
+              'Bạn đã hoàn thành bài thi này và đã sử dụng hết số lần thi được phép.',
+            code: 'EXAM_ATTEMPT_LIMIT_REACHED',
+          });
+        }
 
-    return {
-      attemptId: attempt.id,
-      startedAt: attempt.startedAt,
-      remainingSeconds: attempt.remainingSeconds,
-      status: attempt.status,
-      recovered: false,
-    };
+        // BE-007: gắn attempt với CA THI THẬT (ExamSession qua SessionExam) nếu
+        // có, thay vì để mồ côi / dùng examId làm sessionId. Không có ca -> null.
+        const sessionLink = await tx.sessionExam.findFirst({
+          where: { examDefinitionId },
+          select: { sessionId: true },
+        });
+
+        // Lượt mới: tạo attempt + SNAPSHOT câu hỏi (kèm correctAnswer) vào
+        // AttemptQuestion để chấm điểm chính xác lúc nộp.
+        const now = new Date();
+        const attempt = await tx.examAttempt.create({
+          data: {
+            studentId,
+            examDefinitionId,
+            sessionId: sessionLink?.sessionId ?? null,
+            status: 'IN_PROGRESS',
+            startedAt: now,
+            remainingSeconds: totalSeconds,
+            clientIp,
+            userAgent,
+          },
+        });
+
+        const rawQuestions =
+          await this.examsService.getQuestionsWithAnswers(examDefinitionId);
+        if (rawQuestions.length > 0) {
+          await tx.attemptQuestion.createMany({
+            data: rawQuestions.map((q: any, i: number) => ({
+              attemptId: attempt.id,
+              questionId: String(q.id),
+              questionOrder: i,
+              questionContent: q.content ?? '',
+              questionType: q.type,
+              questionSnapshot: {
+                type: q.type,
+                mediaUrl: q.mediaUrl ?? null,
+                correctAnswer: Array.isArray(q.correctAnswer)
+                  ? q.correctAnswer.join(',')
+                  : String(q.correctAnswer ?? ''),
+              },
+            })),
+          });
+        }
+
+        return {
+          attemptId: attempt.id,
+          startedAt: attempt.startedAt,
+          remainingSeconds: attempt.remainingSeconds,
+          status: attempt.status,
+          recovered: false,
+        };
+      },
+      { timeout: 15000 },
+    );
   }
 
   /**

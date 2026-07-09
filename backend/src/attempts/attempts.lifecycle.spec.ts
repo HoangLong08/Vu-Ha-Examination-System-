@@ -31,6 +31,8 @@ describe('AttemptsService — Exam Lifecycle', () => {
       findMany: jest.Mock;
     };
     result: { create: jest.Mock; findUnique: jest.Mock; findMany: jest.Mock };
+    $transaction: jest.Mock;
+    $executeRaw: jest.Mock;
   };
   let examsService: { getQuestionsWithAnswers: jest.Mock };
 
@@ -52,6 +54,11 @@ describe('AttemptsService — Exam Lifecycle', () => {
         findMany: jest.fn(),
       },
       result: { create: jest.fn(), findUnique: jest.fn(), findMany: jest.fn() },
+      // startExam chạy trong $transaction(tx => ...); mock chạy callback
+      // ngay với chính `prisma` làm `tx` (cùng các jest.fn() ở trên) để test
+      // hiện có không cần biết gì về transaction.
+      $transaction: jest.fn((cb: (tx: unknown) => unknown) => cb(prisma)),
+      $executeRaw: jest.fn().mockResolvedValue(undefined),
     };
     examsService = { getQuestionsWithAnswers: jest.fn(() => []) };
 
@@ -229,6 +236,113 @@ describe('AttemptsService — Exam Lifecycle', () => {
         expect(response.code).toBe('EXAM_ATTEMPT_LIMIT_REACHED');
       }
       expect(prisma.examAttempt.create).not.toHaveBeenCalled();
+    });
+
+    it('BUG FIX exam re-entry: lượt GẦN NHẤT đã SUBMITTED -> không khôi phục (recovered), tạo lượt mới nếu còn lượt', async () => {
+      // Sinh viên đã nộp bài (lượt gần nhất = SUBMITTED). Trước fix, một
+      // attempt IN_PROGRESS mồ côi/cũ hơn (do race) vẫn có thể bị "hồi sinh".
+      // Nay chỉ xét lượt GẦN NHẤT: SUBMITTED -> không recovered=true.
+      prisma.examDefinition.findUnique.mockResolvedValue({
+        id: examDefId,
+        durationMinutes: 60,
+        maxAttempt: 2,
+      });
+      prisma.examAttempt.findFirst.mockResolvedValue({
+        id: 'attempt-submitted',
+        status: 'SUBMITTED',
+        startedAt: new Date(Date.now() - 3600 * 1000),
+      });
+      prisma.examAttempt.count.mockResolvedValue(1); // 1 lượt đã hoàn thành, maxAttempt=2
+      prisma.examAttempt.create.mockResolvedValue({
+        id: 'attempt-retake',
+        startedAt: new Date(),
+        remainingSeconds: 3600,
+        status: 'IN_PROGRESS',
+      });
+
+      const res = await service.startExam(user, examDefId);
+
+      expect(res.recovered).toBe(false);
+      expect(res.attemptId).toBe('attempt-retake');
+      expect(prisma.examAttempt.create).toHaveBeenCalledTimes(1);
+    });
+
+    it('BUG FIX exam re-entry: lượt GẦN NHẤT đã SUBMITTED và đã hết số lần thi -> chặn, không tạo/khôi phục attempt nào', async () => {
+      prisma.examDefinition.findUnique.mockResolvedValue({
+        id: examDefId,
+        durationMinutes: 60,
+        maxAttempt: 1,
+      });
+      prisma.examAttempt.findFirst.mockResolvedValue({
+        id: 'attempt-submitted',
+        status: 'SUBMITTED',
+        startedAt: new Date(Date.now() - 3600 * 1000),
+      });
+      prisma.examAttempt.count.mockResolvedValue(1); // đã dùng hết 1/1 lượt
+
+      await expect(service.startExam(user, examDefId)).rejects.toBeInstanceOf(
+        BadRequestException,
+      );
+      expect(prisma.examAttempt.create).not.toHaveBeenCalled();
+    });
+
+    it('khoá theo studentId+examDefinitionId trong transaction để tránh race tạo trùng attempt IN_PROGRESS', async () => {
+      prisma.examDefinition.findUnique.mockResolvedValue({
+        id: examDefId,
+        durationMinutes: 60,
+      });
+      prisma.examAttempt.findFirst.mockResolvedValue(null);
+      prisma.examAttempt.create.mockResolvedValue({
+        id: 'attempt-new',
+        startedAt: new Date(),
+        remainingSeconds: 3600,
+        status: 'IN_PROGRESS',
+      });
+
+      await service.startExam(user, examDefId);
+
+      // toàn bộ luồng find/count/create phải chạy TRONG $transaction, và phải
+      // lấy advisory lock trước khi đọc/ghi -> loại bỏ khoảng hở check-then-create.
+      expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+      expect(prisma.$executeRaw).toHaveBeenCalledTimes(1);
+    });
+
+    it('2 request start() đồng thời (giả lập bằng cách gọi 2 lần) không tạo 2 attempt IN_PROGRESS song song', async () => {
+      prisma.examDefinition.findUnique.mockResolvedValue({
+        id: examDefId,
+        durationMinutes: 60,
+      });
+
+      // Request #1: chưa có attempt nào -> tạo mới attempt-A.
+      // Request #2: nhờ chạy TRONG cùng transaction/lock tuần tự (mock
+      // $transaction chạy đồng bộ), lần findFirst thứ 2 phải thấy attempt-A
+      // (IN_PROGRESS) vừa tạo và KHÔI PHỤC thay vì tạo attempt-B.
+      let created = false;
+      prisma.examAttempt.findFirst.mockImplementation(() =>
+        Promise.resolve(
+          created
+            ? { id: 'attempt-A', status: 'IN_PROGRESS', startedAt: new Date() }
+            : null,
+        ),
+      );
+      prisma.examAttempt.create.mockImplementation(() => {
+        created = true;
+        return Promise.resolve({
+          id: 'attempt-A',
+          startedAt: new Date(),
+          remainingSeconds: 3600,
+          status: 'IN_PROGRESS',
+        });
+      });
+
+      const res1 = await service.startExam(user, examDefId);
+      const res2 = await service.startExam(user, examDefId);
+
+      expect(res1.attemptId).toBe('attempt-A');
+      expect(res1.recovered).toBe(false);
+      expect(res2.attemptId).toBe('attempt-A');
+      expect(res2.recovered).toBe(true);
+      expect(prisma.examAttempt.create).toHaveBeenCalledTimes(1);
     });
   });
 
