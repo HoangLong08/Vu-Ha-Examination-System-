@@ -155,6 +155,65 @@ describe('useExamSession — start exam blocked by max attempt', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Timer reaches zero -> auto-submit. Backend now treats "already SUBMITTED"
+// (e.g. the auto-submit cron raced ahead of the client's own submit call) as
+// an idempotent success instead of HTTP 400, so submit() must resolve here
+// without throwing and without any console noise.
+// ─────────────────────────────────────────────────────────────────────────────
+describe('useExamSession — submit on timer expiry (auto-submit)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  async function startSession() {
+    (api.startExam as ReturnType<typeof vi.fn>).mockResolvedValue({
+      attemptId: 'attempt-1',
+      startedAt: new Date().toISOString(),
+      remainingSeconds: 0,
+      status: 'IN_PROGRESS',
+      recovered: false,
+    });
+    (api.getAttemptAnswers as ReturnType<typeof vi.fn>).mockResolvedValue([]);
+    (api.getExamQuestions as ReturnType<typeof vi.fn>).mockResolvedValue([]);
+
+    const { result } = renderHook(() => useExamSession('exam-1'));
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    return result;
+  }
+
+  it('resolves successfully when the backend already auto-submitted the attempt (idempotent 200, not 400)', async () => {
+    const result = await startSession();
+    (api.submitAttempt as ReturnType<typeof vi.fn>).mockResolvedValue({
+      attemptId: 'attempt-1',
+      status: 'SUBMITTED',
+      submittedAt: new Date().toISOString(),
+    });
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await expect(result.current.submit()).resolves.toMatchObject({
+      status: 'SUBMITTED',
+    });
+    expect(api.submitAttempt).toHaveBeenCalledWith('attempt-1');
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('still rejects for a genuine submit failure so the caller can react', async () => {
+    const result = await startSession();
+    (api.submitAttempt as ReturnType<typeof vi.fn>).mockRejectedValue({
+      response: { status: 404, data: { message: 'Attempt not found' } },
+    });
+
+    await expect(result.current.submit()).rejects.toBeTruthy();
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // useAutoSave must hit the autosave endpoint with the right batch shape.
 // ─────────────────────────────────────────────────────────────────────────────
 describe('useAutoSave', () => {

@@ -594,17 +594,40 @@ describe('AttemptsService - Scoring & Submit (business logic)', () => {
   // Guard rails: cannot modify/submit a non-IN_PROGRESS attempt.
   // -------------------------------------------------------------------------
   describe('attempt state guards', () => {
-    it('submit() throws BadRequest when attempt already SUBMITTED', async () => {
+    it('submit() is idempotent when attempt already SUBMITTED (e.g. auto-submit cron raced the client) — returns the existing submitted state instead of an error', async () => {
+      const submittedAt = new Date('2026-01-01T00:00:00.000Z');
       const prisma = buildPrismaMock({
-        attempt: { ...baseAttempt, status: 'SUBMITTED' },
+        attempt: { ...baseAttempt, status: 'SUBMITTED', submittedAt },
         questions: [],
         rawAnswers: [],
       });
       const service = await makeService(prisma);
 
-      await expect(service.submit('attempt-1')).rejects.toBeInstanceOf(
-        BadRequestException,
-      );
+      const res: any = await service.submit('attempt-1');
+
+      expect(res.status).toBe('SUBMITTED');
+      expect(res.submittedAt).toBe(submittedAt);
+      // Không viết lại attempt (status/submittedAt đã đúng từ trước).
+      expect(prisma.examAttempt.update).not.toHaveBeenCalled();
+    });
+
+    it('submit() on an already-SUBMITTED attempt still ENSURES a Result exists before returning (closes the race where status flips to SUBMITTED just before Result is written)', async () => {
+      const submittedAt = new Date('2026-01-01T00:00:00.000Z');
+      const prisma = buildPrismaMock({
+        attempt: { ...baseAttempt, status: 'SUBMITTED', submittedAt },
+        questions: [
+          { questionId: 'q1', type: 'SINGLE_CHOICE', correctAnswer: 'B' },
+        ],
+        rawAnswers: [{ questionId: 'q1', answerValue: 'B' }],
+      });
+      const service = await makeService(prisma);
+
+      await service.submit('attempt-1');
+
+      // gradeAttempt() (via upsert, idempotent) must run so a caller who sees
+      // status=SUBMITTED is guaranteed a Result row exists — otherwise the
+      // frontend's immediate GET /results hits it before Result is written.
+      expect(prisma.result.upsert).toHaveBeenCalledTimes(1);
     });
 
     it('submit() throws BadRequest when attempt EXPIRED', async () => {

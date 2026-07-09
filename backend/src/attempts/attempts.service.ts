@@ -446,7 +446,39 @@ export class AttemptsService {
    * số câu đã trả lời).
    */
   async submit(attemptId: string) {
-    await this.validateAttemptActive(attemptId);
+    const attempt = await this.prisma.examAttempt.findUnique({
+      where: { id: attemptId },
+    });
+    if (!attempt) {
+      throw new NotFoundException('Attempt not found');
+    }
+
+    // Idempotent: bài đã ở trạng thái SUBMITTED (do cron auto-submit chạy trước
+    // lúc timer về 0, double-click, hoặc client retry sau lỗi mạng) -> đây là
+    // kết quả nghiệp vụ MONG ĐỢI (đã nộp), không phải lỗi. Trả lại trạng thái đã
+    // nộp thay vì 400, tránh chặn sinh viên xem kết quả.
+    //
+    // VẪN phải chờ gradeAttempt() ở đây: attempt.status được set SUBMITTED
+    // TRƯỚC KHI Result được ghi (xem nhánh dưới), nên có thể có 1 khoảng ngắn
+    // status=SUBMITTED nhưng Result chưa tồn tại (cuộc gọi kia đang giữa hai
+    // bước ghi). gradeAttempt() dùng upsert nên gọi lại vẫn an toàn (không chấm
+    // lại sai khác, không tạo trùng) — gọi lại chỉ để ĐẢM BẢO Result đã có
+    // trước khi trả response, không phải chấm lại theo nghĩa nghiệp vụ mới.
+    if (attempt.status === 'SUBMITTED') {
+      await this.gradeAttempt(attemptId);
+      return {
+        attemptId: attempt.id,
+        status: attempt.status,
+        submittedAt: attempt.submittedAt,
+      };
+    }
+
+    if (attempt.status !== 'IN_PROGRESS') {
+      throw new BadRequestException(
+        `Attempt is ${attempt.status}, cannot modify`,
+      );
+    }
+
     const updatedAttempt = await this.prisma.examAttempt.update({
       where: { id: attemptId },
       data: {
