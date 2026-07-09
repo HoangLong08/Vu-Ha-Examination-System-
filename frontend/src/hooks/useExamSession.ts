@@ -218,20 +218,29 @@ export function useExamSession(examId: string) {
         // Push any offline edits that won the merge up to the server.
         void syncToServer();
       } catch (err) {
-        console.error('useExamSession: failed to start exam', err);
         if (cancelled) return;
         // Ưu tiên thông báo nghiệp vụ từ backend (vd hết số lần thi, ngoài dải IP).
         const apiData = (
           err as { response?: { data?: { message?: string; code?: string } } }
         )?.response?.data;
+        const errorCode = apiData?.code ?? null;
+
+        // EXAM_ATTEMPT_LIMIT_REACHED là phản hồi nghiệp vụ ĐÃ LƯỜNG TRƯỚC (hết số
+        // lần thi), không phải lỗi hệ thống — không log AxiosError ra console để
+        // tránh Next.js Dev Overlay hiểu nhầm thành lỗi ứng dụng.
+        if (errorCode !== 'EXAM_ATTEMPT_LIMIT_REACHED') {
+          console.error('useExamSession: failed to start exam', err);
+        }
+
         setState((prev) => ({
           ...prev,
           loading: false,
           error:
             apiData?.message ||
             'Không thể bắt đầu hoặc khôi phục bài thi. Vui lòng thử lại.',
-          errorCode: apiData?.code ?? null,
+          errorCode,
         }));
+        // Không rethrow: đây là điểm dừng cuối cùng xử lý lỗi start exam.
       }
     })();
     return () => {

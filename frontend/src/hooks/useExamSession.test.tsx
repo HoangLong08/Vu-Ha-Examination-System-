@@ -110,6 +110,7 @@ describe('useExamSession — start exam blocked by max attempt', () => {
         },
       },
     });
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const { result } = renderHook(() => useExamSession('exam-1'));
 
@@ -126,6 +127,30 @@ describe('useExamSession — start exam blocked by max attempt', () => {
     expect(result.current.attemptId).toBeNull();
     expect(api.getAttemptAnswers).not.toHaveBeenCalled();
     expect(api.getExamQuestions).not.toHaveBeenCalled();
+    // Đây là phản hồi nghiệp vụ đã lường trước — không được log AxiosError ra console.
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('DOES log to console for a genuinely unexpected startExam error (e.g. 500 / network)', async () => {
+    (api.startExam as ReturnType<typeof vi.fn>).mockRejectedValue({
+      response: { status: 500, data: { statusCode: 500, message: 'Internal server error' } },
+    });
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const { result } = renderHook(() => useExamSession('exam-1'));
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(result.current.loading).toBe(false);
+    expect(result.current.errorCode).toBeNull();
+    expect(consoleErrorSpy).toHaveBeenCalled();
+
+    consoleErrorSpy.mockRestore();
   });
 });
 
