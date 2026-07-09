@@ -5,6 +5,7 @@ import {
   encodeAnswer,
   decodeAnswer,
   mergeRecovery,
+  useExamSession,
 } from './useExamSession';
 
 // ── Mock the data layer so hooks/helpers run without real network or Dexie. ──
@@ -84,6 +85,47 @@ describe('mergeRecovery', () => {
       [{ questionId: 'q2', answerValue: ['D'], timestamp: '2026-06-12T10:01:00.000Z' }]
     );
     expect(merged).toEqual({ q1: ['A'], q2: ['D'] });
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// startExam failure (maxAttempt=1, finishedCount=1): FR-Q-003 — no new attempt
+// is allowed, and the hook must surface a friendly error without touching
+// recovery/questions APIs.
+// ─────────────────────────────────────────────────────────────────────────────
+describe('useExamSession — start exam blocked by max attempt', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('sets error + errorCode and does NOT load answers/questions when startExam is rejected (maxAttempt=1, finishedCount=1)', async () => {
+    (api.startExam as ReturnType<typeof vi.fn>).mockRejectedValue({
+      response: {
+        status: 400,
+        data: {
+          statusCode: 400,
+          code: 'EXAM_ATTEMPT_LIMIT_REACHED',
+          message:
+            'Bạn đã hoàn thành bài thi này và đã sử dụng hết số lần thi được phép.',
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useExamSession('exam-1'));
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(result.current.loading).toBe(false);
+    expect(result.current.errorCode).toBe('EXAM_ATTEMPT_LIMIT_REACHED');
+    expect(result.current.error).toBe(
+      'Bạn đã hoàn thành bài thi này và đã sử dụng hết số lần thi được phép.'
+    );
+    expect(result.current.attemptId).toBeNull();
+    expect(api.getAttemptAnswers).not.toHaveBeenCalled();
+    expect(api.getExamQuestions).not.toHaveBeenCalled();
   });
 });
 

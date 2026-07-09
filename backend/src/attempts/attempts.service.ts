@@ -124,9 +124,11 @@ export class AttemptsService {
     });
     const maxAttempt = examDef.maxAttempt ?? 1;
     if (finishedCount >= maxAttempt) {
-      throw new BadRequestException(
-        `Đã hết số lần thi cho phép (tối đa ${maxAttempt} lần).`,
-      );
+      throw new BadRequestException({
+        message:
+          'Bạn đã hoàn thành bài thi này và đã sử dụng hết số lần thi được phép.',
+        code: 'EXAM_ATTEMPT_LIMIT_REACHED',
+      });
     }
 
     // BE-007: gắn attempt với CA THI THẬT (ExamSession qua SessionExam) nếu có,

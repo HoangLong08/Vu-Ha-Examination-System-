@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ChevronLeft, ChevronRight, Bookmark, WifiOff } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Bookmark, WifiOff, Lock } from 'lucide-react';
 import { ExamHeader } from '@/components/exam/ExamHeader';
 import { QuestionCard } from '@/components/exam/QuestionCard';
 import { QuestionNav } from '@/components/exam/QuestionNav';
 import { StudentExamSidebar } from '@/components/exam/StudentExamSidebar';
 import { SubmitConfirmModal } from '@/components/exam/SubmitConfirmModal';
+import { Modal } from '@/components/ui/Modal';
 import { useExamSecurity } from '@/hooks/useExamSecurity';
 import { useExamSession } from '@/hooks/useExamSession';
 import { getExamDefinitions, type ExamDefinitionListItem } from '@/services/api';
@@ -40,6 +41,7 @@ function ExamSessionView({ examId }: { examId: string }) {
     submit,
     loading,
     error,
+    errorCode,
   } = useExamSession(examId);
 
   const totalQuestions = questions.length;
@@ -127,7 +129,30 @@ function ExamSessionView({ examId }: { examId: string }) {
     }
   });
 
-  if (loading || totalQuestions === 0) {
+  // Hết số lần thi cho phép: KHÔNG chuyển vào màn làm bài, chỉ hiển thị dialog
+  // thân thiện rồi đưa sinh viên quay lại danh sách đề (không load recovery/câu hỏi).
+  if (errorCode === 'EXAM_ATTEMPT_LIMIT_REACHED') {
+    return (
+      <Modal isOpen onClose={() => router.push('/')} title="Không thể vào thi">
+        <div className="flex flex-col items-center text-center gap-4">
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-500/10">
+            <Lock className="w-6 h-6 text-red-600" />
+          </div>
+          <p className="text-[var(--text-primary)] font-medium">
+            Bạn đã hoàn thành bài thi này. Bạn không thể vào thi lại vì đã hết số lần thi được phép.
+          </p>
+          <button
+            onClick={() => router.push('/')}
+            className="inline-flex items-center gap-2 px-6 py-3 font-semibold rounded-[14px] bg-gradient-to-r from-brand-600 to-brand-700 text-white shadow-md shadow-brand-500/25 hover:shadow-lg hover:shadow-brand-500/40"
+          >
+            Quay lại trang chủ
+          </button>
+        </div>
+      </Modal>
+    );
+  }
+
+  if (loading || (totalQuestions === 0 && !error)) {
     return (
       <div className="flex flex-1 items-center justify-center bg-[var(--bg-primary)] relative z-[1]">
         <p className="text-[var(--text-secondary)] font-medium">
