@@ -123,3 +123,148 @@ src/services/   # gọi API (api.ts), indexedDb…
 - [ ] `npx tsc --noEmit` sạch, `npm run lint` 0 error (B.4, B.8).
 - [ ] Có test cho thay đổi, `npx vitest --run` xanh (B.7).
 - [ ] HTML động đã sanitize (B.5).
+
+---
+
+## PHẦN C — Phụ lục: mẫu code tham khảo (bảo mật phòng thi & auto-save)
+
+> Gộp từ `skill.md` (đã xóa để tránh trùng lặp cấu trúc thư mục ở PHẦN B.2).
+> Các đoạn dưới đây là **mẫu tham khảo** cho hook khóa trình duyệt thi và lưu
+> tạm phía client — đối chiếu implementation thật trong `frontend/src/hooks/`
+> và `frontend/src/services/` trước khi copy, vì code thật có thể đã khác.
+
+### C.1. Hook khóa trình duyệt & phát hiện vi phạm (`useExamSecurity`)
+
+Chặn F5/F12/chuột phải, phát hiện chuyển tab (`visibilitychange`) và mất focus
+(`blur`), gửi vi phạm về `POST /api/v1/violations` (xem FR-P-004/005, UC-067):
+
+```typescript
+// frontend/src/hooks/useExamSecurity.ts
+import { useEffect } from 'react';
+import axios from 'axios';
+
+export const useExamSecurity = (attemptId: string, isExamActive: boolean) => {
+  useEffect(() => {
+    if (!isExamActive) return;
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = 'Bạn có chắc chắn muốn rời khỏi bài thi? Trạng thái sẽ bị ghi nhận.';
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+        (e.ctrlKey && e.key === 'r') ||
+        (e.metaKey && e.key === 'r')
+      ) {
+        e.preventDefault();
+      }
+    };
+
+    const handleContextMenu = (e: MouseEvent) => e.preventDefault();
+
+    const logViolation = async (type: string, description: string) => {
+      try {
+        await axios.post(`/api/v1/violations`, {
+          attemptId, type, description, timestamp: new Date().toISOString(),
+        });
+        new Audio('/assets/warning.mp3').play().catch(() => {});
+      } catch (err) {
+        console.error('Không thể gửi cảnh báo vi phạm:', err);
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) logViolation('TAB_SWITCH', 'Sinh viên ẩn trình duyệt hoặc chuyển tab');
+    };
+    const handleWindowBlur = () => {
+      logViolation('WINDOW_BLUR', 'Sinh viên thoát chế độ toàn màn hình hoặc bấm ra ngoài cửa sổ thi');
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleWindowBlur);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleWindowBlur);
+    };
+  }, [attemptId, isExamActive]);
+};
+```
+
+### C.2. IndexedDB lưu tạm phía client (auto-save, xem FR-H-001)
+
+```typescript
+// frontend/src/services/indexedDbService.ts
+import Dexie, { type Table } from 'dexie';
+
+export interface LocalAnswer {
+  questionId: string;
+  answerValue: any;
+  timestamp: string;
+  isSynced: number; // 0: false, 1: true
+}
+
+class ExamDatabase extends Dexie {
+  answers!: Table<LocalAnswer>;
+  constructor() {
+    super('DAU_Exam_LocalDB');
+    this.version(1).stores({ answers: 'questionId, answerValue, timestamp, isSynced' });
+  }
+}
+
+export const localDb = new ExamDatabase();
+
+export const saveAnswerLocally = async (questionId: string, answerValue: any) => {
+  await localDb.answers.put({
+    questionId, answerValue, timestamp: new Date().toISOString(), isSynced: 0,
+  });
+};
+```
+
+### C.3. Guard giới hạn IP phòng máy (backend, tham khảo `common/guards/ip-range.guard.ts`)
+
+```typescript
+// backend/src/common/guards/ip-range.guard.ts
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import * as ipRangeCheck from 'ip-range-check';
+
+@Injectable()
+export class IpRangeGuard implements CanActivate {
+  constructor(private configService: ConfigService) {}
+
+  canActivate(context: ExecutionContext): boolean {
+    const request = context.switchToHttp().getRequest();
+    let clientIp = request.headers['x-forwarded-for'] || request.socket.remoteAddress;
+
+    if (clientIp === '::1' || clientIp === '::ffff:127.0.0.1') {
+      clientIp = '127.0.0.1';
+    }
+
+    const allowedRanges = this.configService.get<string[]>('ALLOWED_IP_RANGES') || ['127.0.0.1'];
+    if (!ipRangeCheck(clientIp, allowedRanges)) {
+      throw new ForbiddenException(`Thiết bị thi có IP ${clientIp} không nằm trong dải IP phòng máy được cho phép.`);
+    }
+    return true;
+  }
+}
+```
+
+### C.4. Chiến lược indexing PostgreSQL cho 2.000 phiên đồng thời
+
+1. **Index trên foreign key:** đảm bảo `studentId`, `sessionId`, `roomId`, `attemptId` đều có index.
+2. **Composite index cho đáp án:**
+   ```sql
+   CREATE UNIQUE INDEX idx_attempt_question ON "AttemptAnswer" ("attemptId", "questionId");
+   ```
+3. **Partitioning:** nếu dữ liệu tích lũy nhiều năm, cân nhắc partition `AttemptAnswer` và `AuditLog` theo khoảng `createdAt`.
+4. **Connection pool:** dùng PgBouncer làm connection pool manager, `max_connections` khớp tải thực tế.

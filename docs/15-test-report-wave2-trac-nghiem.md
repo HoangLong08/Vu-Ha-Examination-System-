@@ -157,3 +157,17 @@ Yêu cầu mỗi US: Happy ≥1, Edge ≥2, Error ≥2, Integration ≥1.
 
 *Báo cáo tuân theo Chương 7 — Quy trình kiểm thử QC team, CAIRA-DAU v1.0.*
 *Bug ticket: docs/bugs/. Test report này nên được publish lên Docs Host và link vào Jira (Mục 7.7).*
+
+## Phụ lục — PR gắn với vòng QC này
+
+> Gộp từ `pr-body-exam-grading-qc.md` (đã xóa) — tóm tắt PR đã đưa phân hệ này
+> qua sign-off (mô tả ở trên).
+
+- **Mô tả:** Giao phân hệ Thi trắc nghiệm (Grading Engine + UI làm bài) kèm bộ
+  kiểm thử QC theo chuẩn CAIRA-DAU v1.0. Lý do: bản scaffold trước đó không
+  chấm điểm được (điểm luôn 0) và lộ đáp án — lỗ hổng chặn nghiệp vụ. PR khắc
+  phục và đưa QC verdict về **ĐẠT SIGN-OFF**.
+- **US liên quan:** US-047..052, US-054, US-074, US-076..079.
+- **Test thủ công:** `cd backend && npm ci && npx prisma generate && npm test && npm run test:cov`; `cd frontend && npm ci && npx vitest --run`.
+- **Migration:** thêm cột `Exam.deletedAt DateTime?` (additive, tương thích ngược) — chi tiết rollback ở [13-rollback](13-rollback.md).
+- **Known issues khi merge (không chặn sign-off):** BUG-BE-007, BUG-BE-008, thiếu Integration test (Supertest) — đã bổ sung ở vòng 3 (xem mục 1 ở trên).
