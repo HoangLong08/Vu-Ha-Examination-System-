@@ -1,5 +1,6 @@
 'use client';
 
+import axios from 'axios';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   startExam,
@@ -11,6 +12,7 @@ import {
   type AttemptAnswer,
   type AutosaveItem,
   type ExamQuestion,
+  type SubmitResult,
 } from '@/services/api';
 import {
   saveAnswerLocally,
@@ -133,23 +135,50 @@ export function useExamSession(examId: string) {
   const attemptIdRef = useRef<string | null>(null);
   // Bộ đếm debounce gửi server cho câu GÕ TEXT (mỗi câu 1 timer).
   const saveTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+  // Một khi nộp bài bắt đầu (thủ công hoặc hết giờ), mọi lưu đáp án sau đó
+  // phải bị chặn ở FE — backend sẽ trả 400 "Attempt is SUBMITTED" cho các
+  // request tới muộn, đây là race đã lường trước, không phải lỗi hệ thống.
+  const submittingRef = useRef(false);
+  const submitPromiseRef = useRef<Promise<SubmitResult> | null>(null);
+  // Theo dõi các request lưu đáp án đang bay để huỷ ngay khi nộp bài bắt đầu.
+  const inFlightControllers = useRef<Set<AbortController>>(new Set());
+
+  const isExpectedSubmittedError = (err: unknown): boolean => {
+    if (axios.isCancel(err)) return true;
+    const status = (err as { response?: { status?: number } })?.response?.status;
+    const message: string =
+      (err as { response?: { data?: { message?: string } } })?.response?.data
+        ?.message ?? '';
+    return status === 400 && /submitted/i.test(message);
+  };
 
   // Gửi 1 đáp án lên server + đánh dấu đã đồng bộ (best-effort).
   const pushAnswer = useCallback((questionId: string, value: string[]) => {
+    if (submittingRef.current) return;
     const attemptId = attemptIdRef.current;
     if (!attemptId) return;
-    saveAnswer(attemptId, questionId, encodeAnswer(value))
+    const controller = new AbortController();
+    inFlightControllers.current.add(controller);
+    saveAnswer(attemptId, questionId, encodeAnswer(value), controller.signal)
       .then(() => markSynced(questionId))
       .catch((err) => {
+        if (isExpectedSubmittedError(err)) return;
         // Lỗi mạng: giữ bản local chưa sync để retry (sync 30s / flush khi nộp).
         console.error('useExamSession: saveAnswer failed', err);
+      })
+      .finally(() => {
+        inFlightControllers.current.delete(controller);
       });
   }, []);
 
-  // Flush unsynced local answers to the server (batch).
-  const syncToServer = useCallback(async () => {
+  // Flush unsynced local answers to the server (batch). Không tự kiểm tra
+  // `submittingRef` — dùng nội bộ bởi `submit()` để chủ động đẩy nốt đáp án
+  // còn sót TRƯỚC khi gọi submitAttempt (khi đó backend vẫn còn nhận request).
+  const flushToServer = useCallback(async () => {
     const attemptId = attemptIdRef.current;
     if (!attemptId) return;
+    const controller = new AbortController();
+    inFlightControllers.current.add(controller);
     try {
       const unsynced = await getUnsynced();
       if (unsynced.length === 0) return;
@@ -158,12 +187,22 @@ export function useExamSession(examId: string) {
         answer: encodeAnswer(a.answerValue),
         timestamp: a.timestamp,
       }));
-      await autosaveAnswers(attemptId, items);
+      await autosaveAnswers(attemptId, items, controller.signal);
       await Promise.all(unsynced.map((a) => markSynced(a.questionId)));
     } catch (err) {
+      if (isExpectedSubmittedError(err)) return;
       console.error('useExamSession: sync to server failed', err);
+    } finally {
+      inFlightControllers.current.delete(controller);
     }
   }, []);
+
+  // Bản có gác `submittingRef` — dùng cho autosave định kỳ/reconnect, KHÔNG
+  // dùng trong `submit()` (xem `flushToServer`).
+  const syncToServer = useCallback(async () => {
+    if (submittingRef.current) return;
+    await flushToServer();
+  }, [flushToServer]);
 
   // Mount: start (or recover) the attempt, then build the answers map.
   useEffect(() => {
@@ -269,6 +308,7 @@ export function useExamSession(examId: string) {
   // Periodic flush every 30s.
   useEffect(() => {
     const interval = setInterval(() => {
+      if (submittingRef.current) return;
       void syncToServer();
     }, 30000);
     return () => clearInterval(interval);
@@ -284,6 +324,8 @@ export function useExamSession(examId: string) {
    */
   const selectAnswer = useCallback(
     (questionId: string, value: string[], debounce = false) => {
+      // Nộp bài đã bắt đầu/xong: bỏ qua mọi thay đổi đáp án tiếp theo.
+      if (submittingRef.current) return;
       setState((prev) => ({
         ...prev,
         answers: { ...prev.answers, [questionId]: value },
@@ -311,17 +353,43 @@ export function useExamSession(examId: string) {
   );
 
   const submit = useCallback(async () => {
+    // Idempotent: double-click / manual-submit-race-với-hết-giờ chỉ chạy 1 lần,
+    // các lần gọi sau (khi đang nộp) dùng lại promise đang chạy.
+    if (submitPromiseRef.current) return submitPromiseRef.current;
+
     const attemptId = attemptIdRef.current;
     if (!attemptId) {
       throw new Error('Không có attemptId để nộp bài.');
     }
-    // Huỷ mọi timer debounce đang chờ (bản local đã có, syncToServer sẽ gửi nốt).
+
+    // Chặn NGAY mọi lưu đáp án tiếp theo (autosave định kỳ, debounce, click chọn).
+    submittingRef.current = true;
+    // Huỷ mọi timer debounce đang chờ (bản local đã có, flushToServer sẽ gửi nốt).
     Object.values(saveTimers.current).forEach(clearTimeout);
     saveTimers.current = {};
-    // Best-effort flush any pending local answers before finalizing.
-    await syncToServer();
-    return submitAttempt(attemptId);
-  }, [syncToServer]);
+    // Huỷ các request lưu đáp án đang bay (tránh 400 "Attempt is SUBMITTED" lọt console).
+    inFlightControllers.current.forEach((c) => c.abort());
+    inFlightControllers.current.clear();
+
+    const promise = (async () => {
+      // Best-effort flush any pending local answers before finalizing.
+      await flushToServer();
+      try {
+        return await submitAttempt(attemptId);
+      } catch (err) {
+        // submitAttempt thất bại (vd lỗi mạng) — bài CHƯA thực sự SUBMITTED ở
+        // backend, cho phép sinh viên tiếp tục làm/nộp lại.
+        submittingRef.current = false;
+        throw err;
+      }
+    })();
+    submitPromiseRef.current = promise;
+    try {
+      return await promise;
+    } finally {
+      submitPromiseRef.current = null;
+    }
+  }, [flushToServer]);
 
   // Dọn timer khi rời màn (tránh gửi đáp án sau khi unmount).
   useEffect(() => {
