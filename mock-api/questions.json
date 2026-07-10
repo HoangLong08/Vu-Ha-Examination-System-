@@ -60,7 +60,10 @@
       "mediaUrl": null,
       "options": [
         { "key": "A", "value": "Vòng lặp thực hiện 5 lần lặp." },
-        { "key": "B", "value": "Phép cộng `sum += i` chỉ thực hiện khi `i` là số lẻ." },
+        {
+          "key": "B",
+          "value": "Phép cộng `sum += i` chỉ thực hiện khi `i` là số lẻ."
+        },
         { "key": "C", "value": "Giá trị cuối cùng của biến `sum` là 9." },
         { "key": "D", "value": "Giá trị cuối cùng của biến `sum` là 15." }
       ],
@@ -132,8 +135,14 @@
       "mediaUrl": "https://ocd.vn/wp-content/uploads/2025/09/So-do-ma-tran-la-gi.jpg",
       "options": [
         { "key": "A", "value": "free(matrix);" },
-        { "key": "B", "value": "for(int i=0; i<rows; i++) free(matrix[i]); free(matrix);" },
-        { "key": "C", "value": "free(matrix); for(int i=0; i<rows; i++) free(matrix[i]);" },
+        {
+          "key": "B",
+          "value": "for(int i=0; i<rows; i++) free(matrix[i]); free(matrix);"
+        },
+        {
+          "key": "C",
+          "value": "free(matrix); for(int i=0; i<rows; i++) free(matrix[i]);"
+        },
         { "key": "D", "value": "for(int i=0; i<rows; i++) free(*matrix+i);" }
       ],
       "correctAnswer": "B",
@@ -145,12 +154,340 @@
         "lastName": "Trần Thị"
       },
       "tags": ["C", "pointer", "dynamic-memory", "2d-array"]
+    },
+    {
+      "id": "q0000001-aaaa-4bbb-cccc-ddddeeee0005",
+      "createdAt": "2026-04-11T08:00:00.000Z",
+      "updatedAt": "2026-05-22T08:00:00.000Z",
+      "deletedAt": null,
+      "bankId": "qb000001-aaaa-4bbb-cccc-ddddeeee0001",
+      "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0003",
+      "sectionName": "Hàm, Mảng và Con trỏ",
+      "type": "ESSAY",
+      "difficulty": "TRUNG_BINH",
+      "status": "ACTIVE",
+      "reviewStatus": "APPROVED",
+      "reviewedBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "reviewedAt": "2026-05-22T08:00:00.000Z",
+      "content": "Trình bày sự khác nhau giữa biến cục bộ và biến toàn cục trong ngôn ngữ C.",
+      "mediaUrl": null,
+      "options": [],
+      "correctAnswer": null,
+      "explanation": "Câu tự luận cần chấm tay.",
+      "createdBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "tags": ["C", "variable", "scope", "essay"]
+    },
+    {
+      "id": "q0000001-aaaa-4bbb-cccc-ddddeeee0006",
+      "createdAt": "2026-04-11T08:30:00.000Z",
+      "updatedAt": "2026-05-22T08:30:00.000Z",
+      "deletedAt": null,
+      "bankId": "qb000001-aaaa-4bbb-cccc-ddddeeee0001",
+      "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0001",
+      "sectionName": "Biến, Kiểu dữ liệu và Phép toán",
+      "type": "FILL_BLANK",
+      "difficulty": "DE",
+      "status": "ACTIVE",
+      "reviewStatus": "APPROVED",
+      "reviewedBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "reviewedAt": "2026-05-22T08:30:00.000Z",
+      "content": "Trong C, hàm dùng để in dữ liệu ra màn hình là ____.",
+      "mediaUrl": null,
+      "options": [],
+      "correctAnswer": "printf|PRINTF",
+      "explanation": "Hàm printf dùng để in dữ liệu ra màn hình.",
+      "createdBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "tags": ["C", "io", "fill-blank"]
+    },
+    {
+      "id": "q0000001-aaaa-4bbb-cccc-ddddeeee0007",
+      "createdAt": "2026-04-11T09:00:00.000Z",
+      "updatedAt": "2026-05-22T09:00:00.000Z",
+      "deletedAt": null,
+      "bankId": "qb000001-aaaa-4bbb-cccc-ddddeeee0001",
+      "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0001",
+      "sectionName": "Biến, Kiểu dữ liệu và Phép toán",
+      "type": "NUMERIC",
+      "difficulty": "DE",
+      "status": "ACTIVE",
+      "reviewStatus": "APPROVED",
+      "reviewedBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "reviewedAt": "2026-05-22T09:00:00.000Z",
+      "content": "Kiểu double thường chiếm bao nhiêu byte?",
+      "mediaUrl": null,
+      "options": [],
+      "correctAnswer": "8",
+      "explanation": "double thường chiếm 8 bytes.",
+      "createdBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "tags": ["C", "data-type", "numeric"]
+    },
+    {
+      "id": "q0000001-aaaa-4bbb-cccc-ddddeeee0008",
+      "createdAt": "2026-04-11T09:30:00.000Z",
+      "updatedAt": "2026-05-22T09:30:00.000Z",
+      "deletedAt": null,
+      "bankId": "qb000001-aaaa-4bbb-cccc-ddddeeee0001",
+      "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0002",
+      "sectionName": "Cấu trúc rẽ nhánh và Vòng lặp",
+      "type": "SINGLE_CHOICE",
+      "difficulty": "TRUNG_BINH",
+      "status": "ACTIVE",
+      "reviewStatus": "APPROVED",
+      "reviewedBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "reviewedAt": "2026-05-22T09:30:00.000Z",
+      "content": "Xem video minh họa và chọn nhận định đúng.",
+      "mediaUrl": "/mock-media/sample-video.mp4",
+      "mediaType": "VIDEO",
+      "options": [
+        { "key": "A", "value": "Nhận định A." },
+        { "key": "B", "value": "Nhận định B." },
+        { "key": "C", "value": "Nhận định C." },
+        { "key": "D", "value": "Nhận định D." }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Nhận định B khớp với nội dung video minh họa.",
+      "createdBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "tags": ["C", "video", "media"]
+    },
+    {
+      "id": "q0000001-aaaa-4bbb-cccc-ddddeeee0009",
+      "createdAt": "2026-04-11T10:00:00.000Z",
+      "updatedAt": "2026-05-22T10:00:00.000Z",
+      "deletedAt": null,
+      "bankId": "qb000001-aaaa-4bbb-cccc-ddddeeee0001",
+      "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0002",
+      "sectionName": "Cấu trúc rẽ nhánh và Vòng lặp",
+      "type": "SINGLE_CHOICE",
+      "difficulty": "TRUNG_BINH",
+      "status": "ACTIVE",
+      "reviewStatus": "APPROVED",
+      "reviewedBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "reviewedAt": "2026-05-22T10:00:00.000Z",
+      "content": "Nghe audio và chọn từ khóa được nhắc đến.",
+      "mediaUrl": "/mock-media/sample-audio.mp3",
+      "mediaType": "AUDIO",
+      "options": [
+        { "key": "A", "value": "Từ khóa A." },
+        { "key": "B", "value": "Từ khóa B." },
+        { "key": "C", "value": "Từ khóa C." },
+        { "key": "D", "value": "Từ khóa D." }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Từ khóa A được nhắc đến trong audio.",
+      "createdBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "tags": ["C", "audio", "media"]
+    },
+    {
+      "id": "q0000001-aaaa-4bbb-cccc-ddddeeee0010",
+      "createdAt": "2026-04-11T10:30:00.000Z",
+      "updatedAt": "2026-05-22T10:30:00.000Z",
+      "deletedAt": null,
+      "bankId": "qb000001-aaaa-4bbb-cccc-ddddeeee0001",
+      "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0001",
+      "sectionName": "Biến, Kiểu dữ liệu và Phép toán",
+      "type": "MATCHING",
+      "difficulty": "TRUNG_BINH",
+      "status": "ACTIVE",
+      "reviewStatus": "APPROVED",
+      "reviewedBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "reviewedAt": "2026-05-22T10:30:00.000Z",
+      "content": "Ghép hàm với chức năng tương ứng.",
+      "mediaUrl": null,
+      "options": [],
+      "items": [
+        { "key": "I1", "value": "printf" },
+        { "key": "I2", "value": "scanf" }
+      ],
+      "targets": [
+        { "key": "T1", "value": "Nhập dữ liệu" },
+        { "key": "T2", "value": "Xuất dữ liệu" }
+      ],
+      "correctAnswer": "I1:T2,I2:T1",
+      "explanation": "printf dùng để xuất dữ liệu, scanf dùng để nhập dữ liệu.",
+      "createdBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "tags": ["C", "io", "matching"]
+    },
+    {
+      "id": "q0000001-aaaa-4bbb-cccc-ddddeeee0011",
+      "createdAt": "2026-04-11T11:00:00.000Z",
+      "updatedAt": "2026-05-22T11:00:00.000Z",
+      "deletedAt": null,
+      "bankId": "qb000001-aaaa-4bbb-cccc-ddddeeee0001",
+      "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0001",
+      "sectionName": "Biến, Kiểu dữ liệu và Phép toán",
+      "type": "ORDERING",
+      "difficulty": "DE",
+      "status": "ACTIVE",
+      "reviewStatus": "APPROVED",
+      "reviewedBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "reviewedAt": "2026-05-22T11:00:00.000Z",
+      "content": "Sắp xếp đúng thứ tự các bước xử lý biến trong C.",
+      "mediaUrl": null,
+      "options": [],
+      "items": [
+        { "key": "I1", "value": "Khai báo biến" },
+        { "key": "I2", "value": "Gán giá trị" },
+        { "key": "I3", "value": "In kết quả" }
+      ],
+      "targets": [
+        { "key": "T1", "value": "Bước 1" },
+        { "key": "T2", "value": "Bước 2" },
+        { "key": "T3", "value": "Bước 3" }
+      ],
+      "correctAnswer": "I1:T1,I2:T2,I3:T3",
+      "explanation": "Thứ tự đúng: khai báo biến, gán giá trị, in kết quả.",
+      "createdBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "tags": ["C", "variable", "ordering"]
+    },
+    {
+      "id": "q0000001-aaaa-4bbb-cccc-ddddeeee0012",
+      "createdAt": "2026-04-11T11:30:00.000Z",
+      "updatedAt": "2026-05-22T11:30:00.000Z",
+      "deletedAt": null,
+      "bankId": "qb000001-aaaa-4bbb-cccc-ddddeeee0001",
+      "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0002",
+      "sectionName": "Cấu trúc rẽ nhánh và Vòng lặp",
+      "type": "CLASSIFY",
+      "difficulty": "TRUNG_BINH",
+      "status": "ACTIVE",
+      "reviewStatus": "APPROVED",
+      "reviewedBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "reviewedAt": "2026-05-22T11:30:00.000Z",
+      "content": "Phân loại các từ khóa sau vào đúng nhóm.",
+      "mediaUrl": null,
+      "options": [],
+      "items": [
+        { "key": "I1", "value": "int" },
+        { "key": "I2", "value": "for" },
+        { "key": "I3", "value": "while" }
+      ],
+      "targets": [
+        { "key": "T1", "value": "Kiểu dữ liệu" },
+        { "key": "T2", "value": "Cấu trúc lặp" }
+      ],
+      "correctAnswer": "I1:T1,I2:T2,I3:T2",
+      "explanation": "int là kiểu dữ liệu; for, while là cấu trúc lặp.",
+      "createdBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "tags": ["C", "keyword", "classify"]
+    },
+    {
+      "id": "q0000001-aaaa-4bbb-cccc-ddddeeee0013",
+      "createdAt": "2026-04-11T12:00:00.000Z",
+      "updatedAt": "2026-05-22T12:00:00.000Z",
+      "deletedAt": null,
+      "bankId": "qb000001-aaaa-4bbb-cccc-ddddeeee0001",
+      "sectionId": "sec00001-1111-4aaa-bbbb-ccccdddd0003",
+      "sectionName": "Hàm, Mảng và Con trỏ",
+      "type": "HOTSPOT",
+      "difficulty": "TRUNG_BINH",
+      "status": "ACTIVE",
+      "reviewStatus": "APPROVED",
+      "reviewedBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "reviewedAt": "2026-05-22T12:00:00.000Z",
+      "content": "Click vào logo trong ảnh dưới đây.",
+      "mediaUrl": "/logo-dau.png",
+      "mediaType": "IMAGE",
+      "options": [],
+      "correctAnswer": "0.2,0.2,0.5,0.5",
+      "explanation": "Vùng đúng nằm trong khoảng tỉ lệ (0.2,0.2) đến (0.5,0.5) trên ảnh.",
+      "createdBy": {
+        "id": "c8f3d5b2-4a69-4e0f-b2c3-d4e5f6a78901",
+        "email": "tranthimai@dau.edu.vn",
+        "firstName": "Mai",
+        "lastName": "Trần Thị"
+      },
+      "tags": ["C", "hotspot", "image"]
     }
   ],
   "meta": {
     "page": 1,
-    "take": 10,
-    "itemCount": 4,
+    "take": 20,
+    "itemCount": 13,
     "pageCount": 1,
     "hasPreviousPage": false,
     "hasNextPage": false

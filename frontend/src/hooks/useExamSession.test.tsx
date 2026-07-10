@@ -5,8 +5,10 @@ import {
   encodeAnswer,
   decodeAnswer,
   mergeRecovery,
+  toQuestionView,
   useExamSession,
 } from './useExamSession';
+import type { ExamQuestion } from '@/services/api';
 
 // ── Mock the data layer so hooks/helpers run without real network or Dexie. ──
 vi.mock('@/services/api', () => ({
@@ -48,6 +50,46 @@ describe('answer encode/decode', () => {
 
   it('round-trips A,C through decode → encode', () => {
     expect(encodeAnswer(decodeAnswer('A,C'))).toBe('A,C');
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// toQuestionView: mediaType must come from the backend, not be guessed as IMAGE.
+// ─────────────────────────────────────────────────────────────────────────────
+describe('toQuestionView', () => {
+  const base: ExamQuestion = {
+    id: 'q1',
+    type: 'SINGLE_CHOICE',
+    content: 'content',
+    options: [],
+  };
+
+  it('keeps mediaType VIDEO instead of defaulting to IMAGE', () => {
+    const view = toQuestionView({
+      ...base,
+      mediaUrl: '/mock-media/sample-video.mp4',
+      mediaType: 'VIDEO',
+    });
+    expect(view.mediaType).toBe('VIDEO');
+  });
+
+  it('keeps mediaType AUDIO instead of defaulting to IMAGE', () => {
+    const view = toQuestionView({
+      ...base,
+      mediaUrl: '/mock-media/sample-audio.mp3',
+      mediaType: 'AUDIO',
+    });
+    expect(view.mediaType).toBe('AUDIO');
+  });
+
+  it('falls back to IMAGE when mediaUrl is present but mediaType is missing', () => {
+    const view = toQuestionView({ ...base, mediaUrl: '/logo-dau.png' });
+    expect(view.mediaType).toBe('IMAGE');
+  });
+
+  it('leaves mediaType undefined when there is no mediaUrl', () => {
+    const view = toQuestionView({ ...base, mediaUrl: null });
+    expect(view.mediaType).toBeUndefined();
   });
 });
 
