@@ -1,0 +1,13 @@
+  chore/add-commitlint[m
+  chore/add-editorconfig[m
+  chore/add-husky-lint-staged[m
+  chore/backend-eslint-prettier[m
+  chore/frontend-eslint-prettier[m
+  chore/frontend-eslint-prettier-v2[m
+  ci/github-actions[m
+  dev[m
+  feature/max-attempt-error-handling[m
+* [32mfeature/mock-full-question-types[m
+  fix/submit-race-condition[m
+  master[m
+  style/frontend-format[m

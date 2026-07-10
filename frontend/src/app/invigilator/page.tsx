@@ -28,6 +28,7 @@ import {
   resetStudentSession,
   type InvigStudent,
 } from '@/services/api';
+import { normalizeSearchText } from '@/lib/searchText';
 
 interface StudentStatus {
   id: string;
@@ -60,6 +61,24 @@ function fmtTime(sec: number | null): string | undefined {
   const m = Math.floor(sec / 60);
   const s = sec % 60;
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+/** "yyyy-mm-dd" -> "dd/mm/yyyy" CHỈ để hiển thị (so sánh/lọc vẫn dùng yyyy-mm-dd). */
+function fmtDateDisplay(isoDate: string): string {
+  const [y, m, d] = isoDate.split('-');
+  return y && m && d ? `${d}/${m}/${y}` : isoDate;
+}
+
+/**
+ * So khớp bộ lọc ngày với ngày phòng thi — CHỈ so sánh phần yyyy-mm-dd, không
+ * so sánh timestamp/Date đầy đủ (tránh lệch múi giờ) và không so chuỗi hiển thị.
+ */
+export function matchesExamDate(
+  roomExamDate: string,
+  filterDate: string,
+): boolean {
+  if (filterDate === 'all') return true;
+  return roomExamDate.slice(0, 10) === filterDate;
 }
 
 /** Map sinh viên thật (API) -> shape hiển thị của bảng. */
@@ -181,7 +200,8 @@ export default function InvigilatorPage() {
             name: `Đề ${s.code}`,
             examName: s.title,
             totalStudents: s.totalStudents,
-            examDate: '',
+            // yyyy-mm-dd từ backend — cắt phòng khi backend lỡ trả kèm giờ/timezone.
+            examDate: (s.examDate || '').slice(0, 10),
             shift: 1,
             status: s.status,
           })),
@@ -303,12 +323,19 @@ export default function InvigilatorPage() {
     );
   }
 
-  // Filter Logic
+  // Filter Logic — so sánh CHỈ theo yyyy-mm-dd (bỏ giờ/timezone), không so
+  // với chuỗi hiển thị đã định dạng (dd/mm/yyyy) để tránh lệch múi giờ/định dạng.
+  const hasActiveFilters =
+    filterDate !== 'all' ||
+    filterShift !== 'all' ||
+    (filterSubject !== 'all' && filterSubject !== '');
+  const clearFilters = () => {
+    setFilterDate('all');
+    setFilterShift('all');
+    setFilterSubject('all');
+  };
   const filteredRooms = rooms.filter((r) => {
-    if (filterDate !== 'all') {
-      const formattedFilterDate = filterDate.split('-').reverse().join('/');
-      if (r.examDate !== formattedFilterDate) return false;
-    }
+    if (!matchesExamDate(r.examDate, filterDate)) return false;
     if (filterShift !== 'all' && r.shift.toString() !== filterShift)
       return false;
     if (
@@ -334,12 +361,14 @@ export default function InvigilatorPage() {
       if (submitFilter === 'submitted' && s.status !== 'SUBMITTED')
         return false;
       if (submitFilter === 'not' && s.status === 'SUBMITTED') return false;
-      const q = studentQuery.trim().toLowerCase();
+      const q = normalizeSearchText(studentQuery);
       if (!q) return true;
       return (
-        s.name.toLowerCase().includes(q) ||
-        s.studentId.toLowerCase().includes(q) ||
-        s.phone.toLowerCase().includes(q)
+        normalizeSearchText(s.name).includes(q) ||
+        normalizeSearchText(s.studentId).includes(q) ||
+        normalizeSearchText(s.phone).includes(q) ||
+        normalizeSearchText(s.machineId).includes(q) ||
+        normalizeSearchText(s.ipAddress).includes(q)
       );
     })
     .slice()
@@ -482,7 +511,8 @@ export default function InvigilatorPage() {
                     Ca {room.shift}
                   </span>
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5" /> {room.examDate}
+                    <Clock className="w-3.5 h-3.5" />{' '}
+                    {room.examDate ? fmtDateDisplay(room.examDate) : '—'}
                   </span>
                 </div>
               </GlassCard>
@@ -491,8 +521,18 @@ export default function InvigilatorPage() {
               <div className="col-span-full py-12 flex flex-col items-center justify-center text-[var(--text-muted)] bg-[var(--bg-glass-light)] rounded-[20px] border border-dashed border-[var(--border-subtle)]">
                 <Search className="w-10 h-10 mb-3 opacity-20" />
                 <p className="font-medium">
-                  Không tìm thấy phòng thi nào phù hợp với bộ lọc.
+                  {hasActiveFilters
+                    ? 'Không có phòng thi nào phù hợp với bộ lọc đang chọn.'
+                    : 'Chưa có phòng thi nào.'}
                 </p>
+                {hasActiveFilters && (
+                  <button
+                    onClick={clearFilters}
+                    className="mt-4 px-4 py-2 rounded-lg text-[13px] font-semibold bg-[var(--bg-glass)] border border-[var(--border-subtle)] text-brand-600 hover:border-brand-500 transition-colors"
+                  >
+                    Xóa bộ lọc
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -546,7 +586,7 @@ export default function InvigilatorPage() {
                   <input
                     value={studentQuery}
                     onChange={(e) => setStudentQuery(e.target.value)}
-                    placeholder="Tìm theo tên, mã SV hoặc số điện thoại…"
+                    placeholder="Tìm theo tên (có/không dấu), mã SV, SĐT hoặc máy/IP…"
                     className="w-full pl-9 pr-3 py-2 rounded-lg text-[13px] bg-[var(--bg-glass)] border border-[var(--border-subtle)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-brand-500/40"
                   />
                 </div>
@@ -748,9 +788,28 @@ export default function InvigilatorPage() {
                         colSpan={8}
                         className="p-8 text-center text-[var(--text-secondary)]"
                       >
-                        {students.length === 0
-                          ? 'Không có sinh viên nào.'
-                          : 'Không tìm thấy sinh viên khớp tìm kiếm.'}
+                        {students.length === 0 ? (
+                          'Không có sinh viên nào.'
+                        ) : (
+                          <div className="flex flex-col items-center gap-3">
+                            <span>
+                              Không tìm thấy sinh viên khớp
+                              {studentQuery.trim()
+                                ? ` "${studentQuery.trim()}"`
+                                : ' bộ lọc đang chọn'}
+                              .
+                            </span>
+                            <button
+                              onClick={() => {
+                                setStudentQuery('');
+                                setSubmitFilter('all');
+                              }}
+                              className="px-4 py-2 rounded-lg text-[13px] font-semibold bg-[var(--bg-glass)] border border-[var(--border-subtle)] text-brand-600 hover:border-brand-500 transition-colors"
+                            >
+                              Xóa bộ lọc
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   )}
