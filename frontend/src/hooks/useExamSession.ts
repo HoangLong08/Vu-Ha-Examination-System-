@@ -43,11 +43,11 @@ export interface ExamQuestionView {
   targets?: { key: string; value: string }[];
   difficulty?: string;
   mediaUrl?: string | null;
-  mediaType?: 'IMAGE' | undefined;
+  mediaType?: 'IMAGE' | 'VIDEO' | 'AUDIO' | string | undefined;
 }
 
-/** Map a backend question to the FE view: derive mediaType from mediaUrl. */
-function toQuestionView(q: ExamQuestion): ExamQuestionView {
+/** Map a backend question to the FE view: use backend mediaType, fall back to IMAGE. */
+export function toQuestionView(q: ExamQuestion): ExamQuestionView {
   return {
     id: q.id,
     type: q.type,
@@ -57,7 +57,7 @@ function toQuestionView(q: ExamQuestion): ExamQuestionView {
     targets: q.targets,
     difficulty: q.difficulty,
     mediaUrl: q.mediaUrl,
-    mediaType: q.mediaUrl ? 'IMAGE' : undefined,
+    mediaType: q.mediaType ?? (q.mediaUrl ? 'IMAGE' : undefined),
   };
 }
 

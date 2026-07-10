@@ -98,6 +98,7 @@ export interface ExamQuestion {
   targets?: { key: string; value: string }[];
   difficulty?: string;
   mediaUrl?: string | null;
+  mediaType?: 'IMAGE' | 'VIDEO' | 'AUDIO' | string | null;
 }
 
 export interface AttemptAnswer {
