@@ -38,11 +38,16 @@
     "lint-staged": "^15.4.0"
   },
   "lint-staged": {
-    "backend/**/*.ts": [
-      "npm --prefix backend run lint -- --fix"
+    "backend/**/*.{js,jsx,ts,tsx}": [
+      "npm --prefix backend run lint:staged --",
+      "npm --prefix backend run format:staged --"
     ],
-    "frontend/**/*.{ts,tsx}": [
-      "npm --prefix frontend run lint -- --fix"
+    "frontend/**/*.{js,jsx,ts,tsx}": [
+      "npm --prefix frontend run lint:staged --",
+      "npm --prefix frontend run format:staged --"
+    ],
+    "**/*.{json,md,css,scss,html,yml,yaml}": [
+      "npm --prefix backend run format:staged --"
     ]
   }
 }
