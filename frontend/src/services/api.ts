@@ -364,6 +364,8 @@ export interface InvigSession {
   totalStudents: number;
   inProgress: number;
   submitted: number;
+  /** yyyy-mm-dd — ngày lượt thi đầu tiên của đề (mốc hiển thị/lọc theo ngày). */
+  examDate: string;
   status: 'ONGOING' | 'COMPLETED' | 'UPCOMING';
 }
 

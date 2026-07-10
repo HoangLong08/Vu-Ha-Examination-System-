@@ -40,6 +40,7 @@ export class InvigilatorService {
         total: number;
         inProgress: number;
         submitted: number;
+        earliestCreatedAt: Date;
       }
     >();
     for (const a of attempts) {
@@ -50,11 +51,14 @@ export class InvigilatorService {
         total: 0,
         inProgress: 0,
         submitted: 0,
+        earliestCreatedAt: a.createdAt,
       };
       cur.total += 1;
       if (a.status === 'IN_PROGRESS') cur.inProgress += 1;
       if (a.status === 'SUBMITTED' || a.status === 'EXPIRED')
         cur.submitted += 1;
+      if (a.createdAt < cur.earliestCreatedAt)
+        cur.earliestCreatedAt = a.createdAt;
       byExam.set(a.examDefinitionId, cur);
     }
 
@@ -66,6 +70,9 @@ export class InvigilatorService {
       totalStudents: Math.max(STUDENT_EMAILS.length, e.total),
       inProgress: e.inProgress,
       submitted: e.submitted,
+      // Ngày thi (yyyy-mm-dd): chưa có lịch thi thật (ExamSession) gắn với lượt
+      // thi mock nên dùng ngày lượt thi ĐẦU TIÊN của đề làm mốc hiển thị/lọc.
+      examDate: e.earliestCreatedAt.toISOString().slice(0, 10),
       // Trạng thái THẬT theo lượt thi: đang làm -> ONGOING; có người nộp mà không
       // ai đang làm -> COMPLETED; chưa ai vào -> UPCOMING.
       status:
