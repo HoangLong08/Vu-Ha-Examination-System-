@@ -35,17 +35,23 @@ export function Timer({ initialSeconds, onTimeUp }: TimerProps) {
   return (
     <div
       className={`flex items-center gap-2.5 glass-btn px-[18px] py-2 rounded-[14px] ${
-        isWarning ? 'border-[rgba(225,29,72,0.3)] animate-[pulse-danger_1s_ease-in-out_infinite]' : ''
+        isWarning
+          ? 'border-[rgba(225,29,72,0.3)] animate-[pulse-danger_1s_ease-in-out_infinite]'
+          : ''
       }`}
     >
       <Clock
         className={`w-5 h-5 ${
-          isWarning ? 'text-[var(--color-danger)]' : 'text-brand-600 dark:text-blue-400'
+          isWarning
+            ? 'text-[var(--color-danger)]'
+            : 'text-brand-600 dark:text-blue-400'
         }`}
       />
       <div
         className={`font-mono text-[22px] font-bold tracking-wider min-w-[72px] text-center ${
-          isWarning ? 'text-[var(--color-danger)]' : 'text-[var(--text-primary)]'
+          isWarning
+            ? 'text-[var(--color-danger)]'
+            : 'text-[var(--text-primary)]'
         }`}
         style={{ fontFamily: 'var(--font-mono)' }}
       >

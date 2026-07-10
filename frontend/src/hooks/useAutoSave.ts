@@ -1,7 +1,11 @@
 'use client';
 
 import { useEffect, useCallback } from 'react';
-import { saveAnswerLocally, getUnsynced, markSynced } from '@/services/indexedDbService';
+import {
+  saveAnswerLocally,
+  getUnsynced,
+  markSynced,
+} from '@/services/indexedDbService';
 import { autosaveAnswers, type AutosaveItem } from '@/services/api';
 
 /**
@@ -17,7 +21,7 @@ export function useAutoSave(attemptId: string, isActive: boolean) {
     async (questionId: string, answerValue: string[]) => {
       await saveAnswerLocally(questionId, answerValue);
     },
-    []
+    [],
   );
 
   const syncToServer = useCallback(async () => {

@@ -51,12 +51,12 @@ describe('ExamManagement', () => {
 
     await waitFor(() =>
       expect(createExamDefinition).toHaveBeenCalledWith(
-        expect.objectContaining({ code: 'CS999', title: 'Đề mới' })
-      )
+        expect.objectContaining({ code: 'CS999', title: 'Đề mới' }),
+      ),
     );
     // tải lại danh sách (getExamDefinitions gọi lần 2)
     await waitFor(() =>
-      expect(getExamDefinitions.mock.calls.length).toBeGreaterThanOrEqual(2)
+      expect(getExamDefinitions.mock.calls.length).toBeGreaterThanOrEqual(2),
     );
   });
 
@@ -67,7 +67,7 @@ describe('ExamManagement', () => {
     await user.click(screen.getByRole('button', { name: /Tạo Đề Thi/i }));
     await user.click(screen.getByRole('button', { name: /^Tạo đề$/i }));
     expect(
-      await screen.findByText(/Vui lòng nhập mã đề và tên đề/i)
+      await screen.findByText(/Vui lòng nhập mã đề và tên đề/i),
     ).toBeInTheDocument();
     expect(createExamDefinition).not.toHaveBeenCalled();
   });

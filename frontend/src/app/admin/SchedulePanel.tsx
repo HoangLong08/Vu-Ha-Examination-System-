@@ -28,11 +28,19 @@ import {
 
 function fmtDate(iso: string): string {
   const d = new Date(iso);
-  return isNaN(d.getTime()) ? '—' : d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  return isNaN(d.getTime())
+    ? '—'
+    : d.toLocaleDateString('vi-VN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
 }
 function fmtHM(iso: string): string {
   const d = new Date(iso);
-  return isNaN(d.getTime()) ? '' : d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+  return isNaN(d.getTime())
+    ? ''
+    : d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
 }
 
 /**
@@ -55,7 +63,12 @@ export function SchedulePanel() {
 
   // Modal tạo phòng
   const [roomOpen, setRoomOpen] = useState(false);
-  const [roomForm, setRoomForm] = useState({ code: '', name: '', capacity: 40, location: '' });
+  const [roomForm, setRoomForm] = useState({
+    code: '',
+    name: '',
+    capacity: 40,
+    location: '',
+  });
   const [savingRoom, setSavingRoom] = useState(false);
 
   const load = async () => {
@@ -102,7 +115,9 @@ export function SchedulePanel() {
       flash('Đã phân công giám thị.');
       await load();
     } catch {
-      setError('Phân công thất bại (có thể đã phân công giám thị này cho phòng).');
+      setError(
+        'Phân công thất bại (có thể đã phân công giám thị này cho phòng).',
+      );
     } finally {
       setAssigning(false);
     }
@@ -146,9 +161,15 @@ export function SchedulePanel() {
   return (
     <div className="animate-[page-enter_0.3s_ease] flex flex-col gap-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h2 className="text-xl font-bold text-[var(--text-primary)]">Lịch Thi & Phân Công</h2>
+        <h2 className="text-xl font-bold text-[var(--text-primary)]">
+          Lịch Thi & Phân Công
+        </h2>
         <div className="flex gap-3">
-          <Button variant="secondary" onClick={() => setRoomOpen(true)} className="px-4 py-2 gap-2 text-sm">
+          <Button
+            variant="secondary"
+            onClick={() => setRoomOpen(true)}
+            className="px-4 py-2 gap-2 text-sm"
+          >
             <DoorOpen className="w-4 h-4" /> Tạo phòng ({rooms.length})
           </Button>
         </div>
@@ -189,25 +210,45 @@ export function SchedulePanel() {
               </thead>
               <tbody className="divide-y divide-[var(--border-subtle)] text-[13px]">
                 {sessions.map((s) => (
-                  <tr key={s.id} className="hover:bg-[var(--bg-glass-light)] transition-colors align-top">
-                    <td className="p-4 pl-6 text-[13px] font-semibold text-brand-600 dark:text-blue-400">{s.code}</td>
-                    <td className="p-4">
-                      <p className="text-[13px] font-medium text-[var(--text-primary)]">{s.exam?.title ?? s.name}</p>
-                      <p className="text-[12px] text-[var(--text-muted)]">{s.exam?.code ?? '—'}</p>
+                  <tr
+                    key={s.id}
+                    className="hover:bg-[var(--bg-glass-light)] transition-colors align-top"
+                  >
+                    <td className="p-4 pl-6 text-[13px] font-semibold text-brand-600 dark:text-blue-400">
+                      {s.code}
                     </td>
                     <td className="p-4">
-                      <p className="text-[13px] font-medium text-[var(--text-primary)]">{fmtDate(s.examDate)}</p>
-                      <p className="text-[12px] font-semibold text-indigo-600 dark:text-indigo-400">{fmtHM(s.startTime)}–{fmtHM(s.endTime)}</p>
+                      <p className="text-[13px] font-medium text-[var(--text-primary)]">
+                        {s.exam?.title ?? s.name}
+                      </p>
+                      <p className="text-[12px] text-[var(--text-muted)]">
+                        {s.exam?.code ?? '—'}
+                      </p>
+                    </td>
+                    <td className="p-4">
+                      <p className="text-[13px] font-medium text-[var(--text-primary)]">
+                        {fmtDate(s.examDate)}
+                      </p>
+                      <p className="text-[12px] font-semibold text-indigo-600 dark:text-indigo-400">
+                        {fmtHM(s.startTime)}–{fmtHM(s.endTime)}
+                      </p>
                     </td>
                     <td className="p-4">
                       {s.assignments.length === 0 ? (
-                        <span className="text-[12px] text-[var(--text-muted)] italic">Chưa phân công</span>
+                        <span className="text-[12px] text-[var(--text-muted)] italic">
+                          Chưa phân công
+                        </span>
                       ) : (
                         <div className="flex flex-col gap-1.5">
                           {s.assignments.map((a) => (
-                            <span key={a.id} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[var(--bg-glass)] border border-[var(--border-subtle)] text-[var(--text-primary)] w-fit">
+                            <span
+                              key={a.id}
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[var(--bg-glass)] border border-[var(--border-subtle)] text-[var(--text-primary)] w-fit"
+                            >
                               {a.invigilatorName}
-                              <span className="text-[var(--text-muted)]">· {a.roomCode}</span>
+                              <span className="text-[var(--text-muted)]">
+                                · {a.roomCode}
+                              </span>
                               <button
                                 onClick={() => handleRemove(a.id)}
                                 aria-label="Gỡ phân công"
@@ -245,42 +286,64 @@ export function SchedulePanel() {
       >
         <div className="flex flex-col gap-4">
           <label className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-medium text-[var(--text-secondary)]">Phòng thi</span>
+            <span className="text-[13px] font-medium text-[var(--text-secondary)]">
+              Phòng thi
+            </span>
             <select
               aria-label="Chọn phòng"
               value={pickRoom}
               onChange={(e) => setPickRoom(e.target.value)}
               className="px-3 py-2.5 rounded-[12px] text-[14px] bg-[var(--bg-glass)] border border-[var(--border-subtle)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-brand-500/40"
             >
-              {rooms.length === 0 && <option value="">(Chưa có phòng — hãy tạo phòng)</option>}
+              {rooms.length === 0 && (
+                <option value="">(Chưa có phòng — hãy tạo phòng)</option>
+              )}
               {rooms.map((r) => (
-                <option key={r.id} value={r.id}>{r.name} ({r.code}) · {r.capacity} chỗ</option>
+                <option key={r.id} value={r.id}>
+                  {r.name} ({r.code}) · {r.capacity} chỗ
+                </option>
               ))}
             </select>
           </label>
           <label className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-medium text-[var(--text-secondary)]">Giám thị</span>
+            <span className="text-[13px] font-medium text-[var(--text-secondary)]">
+              Giám thị
+            </span>
             <select
               aria-label="Chọn giám thị"
               value={pickInv}
               onChange={(e) => setPickInv(e.target.value)}
               className="px-3 py-2.5 rounded-[12px] text-[14px] bg-[var(--bg-glass)] border border-[var(--border-subtle)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-brand-500/40"
             >
-              {invigilators.length === 0 && <option value="">(Chưa có giám thị đăng nhập)</option>}
+              {invigilators.length === 0 && (
+                <option value="">(Chưa có giám thị đăng nhập)</option>
+              )}
               {invigilators.map((i) => (
-                <option key={i.id} value={i.id}>{i.fullName}</option>
+                <option key={i.id} value={i.id}>
+                  {i.fullName}
+                </option>
               ))}
             </select>
           </label>
           <div className="flex justify-end gap-3 pt-1">
-            <Button variant="secondary" onClick={() => setAssignFor(null)} className="px-4 py-2 text-sm">Huỷ</Button>
+            <Button
+              variant="secondary"
+              onClick={() => setAssignFor(null)}
+              className="px-4 py-2 text-sm"
+            >
+              Huỷ
+            </Button>
             <Button
               variant="primary"
               onClick={handleAssign}
               disabled={assigning || !pickRoom || !pickInv}
               className="px-5 py-2 gap-2 text-sm"
             >
-              {assigning ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
+              {assigning ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <UserPlus className="w-4 h-4" />
+              )}
               Phân công
             </Button>
           </div>
@@ -288,30 +351,91 @@ export function SchedulePanel() {
       </Modal>
 
       {/* Modal: tạo phòng */}
-      <Modal isOpen={roomOpen} onClose={() => setRoomOpen(false)} title="Tạo phòng thi" className="max-w-md p-6">
+      <Modal
+        isOpen={roomOpen}
+        onClose={() => setRoomOpen(false)}
+        title="Tạo phòng thi"
+        className="max-w-md p-6"
+      >
         <div className="flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-4">
             <label className="flex flex-col gap-1.5">
-              <span className="text-[13px] font-medium text-[var(--text-secondary)]">Mã phòng</span>
-              <input aria-label="Mã phòng" value={roomForm.code} onChange={(e) => setRoomForm({ ...roomForm, code: e.target.value })} placeholder="PM4" className="px-3 py-2.5 rounded-[12px] text-[14px] bg-[var(--bg-glass)] border border-[var(--border-subtle)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-brand-500/40" />
+              <span className="text-[13px] font-medium text-[var(--text-secondary)]">
+                Mã phòng
+              </span>
+              <input
+                aria-label="Mã phòng"
+                value={roomForm.code}
+                onChange={(e) =>
+                  setRoomForm({ ...roomForm, code: e.target.value })
+                }
+                placeholder="PM4"
+                className="px-3 py-2.5 rounded-[12px] text-[14px] bg-[var(--bg-glass)] border border-[var(--border-subtle)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-brand-500/40"
+              />
             </label>
             <label className="flex flex-col gap-1.5">
-              <span className="text-[13px] font-medium text-[var(--text-secondary)]">Sức chứa</span>
-              <input aria-label="Sức chứa" type="number" min={1} value={roomForm.capacity} onChange={(e) => setRoomForm({ ...roomForm, capacity: Number(e.target.value) })} className="px-3 py-2.5 rounded-[12px] text-[14px] bg-[var(--bg-glass)] border border-[var(--border-subtle)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-brand-500/40" />
+              <span className="text-[13px] font-medium text-[var(--text-secondary)]">
+                Sức chứa
+              </span>
+              <input
+                aria-label="Sức chứa"
+                type="number"
+                min={1}
+                value={roomForm.capacity}
+                onChange={(e) =>
+                  setRoomForm({ ...roomForm, capacity: Number(e.target.value) })
+                }
+                className="px-3 py-2.5 rounded-[12px] text-[14px] bg-[var(--bg-glass)] border border-[var(--border-subtle)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-brand-500/40"
+              />
             </label>
           </div>
           <label className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-medium text-[var(--text-secondary)]">Tên phòng</span>
-            <input aria-label="Tên phòng" value={roomForm.name} onChange={(e) => setRoomForm({ ...roomForm, name: e.target.value })} placeholder="Phòng Máy 4" className="px-3 py-2.5 rounded-[12px] text-[14px] bg-[var(--bg-glass)] border border-[var(--border-subtle)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-brand-500/40" />
+            <span className="text-[13px] font-medium text-[var(--text-secondary)]">
+              Tên phòng
+            </span>
+            <input
+              aria-label="Tên phòng"
+              value={roomForm.name}
+              onChange={(e) =>
+                setRoomForm({ ...roomForm, name: e.target.value })
+              }
+              placeholder="Phòng Máy 4"
+              className="px-3 py-2.5 rounded-[12px] text-[14px] bg-[var(--bg-glass)] border border-[var(--border-subtle)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-brand-500/40"
+            />
           </label>
           <label className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-medium text-[var(--text-secondary)]">Vị trí (tuỳ chọn)</span>
-            <input aria-label="Vị trí" value={roomForm.location} onChange={(e) => setRoomForm({ ...roomForm, location: e.target.value })} placeholder="Tầng 3 — Nhà B" className="px-3 py-2.5 rounded-[12px] text-[14px] bg-[var(--bg-glass)] border border-[var(--border-subtle)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-brand-500/40" />
+            <span className="text-[13px] font-medium text-[var(--text-secondary)]">
+              Vị trí (tuỳ chọn)
+            </span>
+            <input
+              aria-label="Vị trí"
+              value={roomForm.location}
+              onChange={(e) =>
+                setRoomForm({ ...roomForm, location: e.target.value })
+              }
+              placeholder="Tầng 3 — Nhà B"
+              className="px-3 py-2.5 rounded-[12px] text-[14px] bg-[var(--bg-glass)] border border-[var(--border-subtle)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-brand-500/40"
+            />
           </label>
           <div className="flex justify-end gap-3 pt-1">
-            <Button variant="secondary" onClick={() => setRoomOpen(false)} className="px-4 py-2 text-sm">Huỷ</Button>
-            <Button variant="primary" onClick={handleCreateRoom} disabled={savingRoom} className="px-5 py-2 gap-2 text-sm">
-              {savingRoom ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+            <Button
+              variant="secondary"
+              onClick={() => setRoomOpen(false)}
+              className="px-4 py-2 text-sm"
+            >
+              Huỷ
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleCreateRoom}
+              disabled={savingRoom}
+              className="px-5 py-2 gap-2 text-sm"
+            >
+              {savingRoom ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Plus className="w-4 h-4" />
+              )}
               Tạo phòng
             </Button>
           </div>

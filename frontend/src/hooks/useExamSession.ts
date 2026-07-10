@@ -81,7 +81,10 @@ export function decodeAnswer(value: string | null | undefined): string[] {
  */
 export function mergeRecovery(
   serverAnswers: AttemptAnswer[],
-  localUnsynced: Pick<LocalAnswer, 'questionId' | 'answerValue' | 'timestamp'>[]
+  localUnsynced: Pick<
+    LocalAnswer,
+    'questionId' | 'answerValue' | 'timestamp'
+  >[],
 ): AnswersMap {
   const result: AnswersMap = {};
   const timestamps: Record<string, string> = {};
@@ -145,7 +148,8 @@ export function useExamSession(examId: string) {
 
   const isExpectedSubmittedError = (err: unknown): boolean => {
     if (axios.isCancel(err)) return true;
-    const status = (err as { response?: { status?: number } })?.response?.status;
+    const status = (err as { response?: { status?: number } })?.response
+      ?.status;
     const message: string =
       (err as { response?: { data?: { message?: string } } })?.response?.data
         ?.message ?? '';
@@ -349,7 +353,7 @@ export function useExamSession(examId: string) {
         pushAnswer(questionId, value);
       }
     },
-    [pushAnswer]
+    [pushAnswer],
   );
 
   const submit = useCallback(async () => {

@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ChevronLeft, ChevronRight, Bookmark, WifiOff, Lock } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Bookmark,
+  WifiOff,
+  Lock,
+} from 'lucide-react';
 import { ExamHeader } from '@/components/exam/ExamHeader';
 import { QuestionCard } from '@/components/exam/QuestionCard';
 import { QuestionNav } from '@/components/exam/QuestionNav';
@@ -11,7 +17,10 @@ import { SubmitConfirmModal } from '@/components/exam/SubmitConfirmModal';
 import { Modal } from '@/components/ui/Modal';
 import { useExamSecurity } from '@/hooks/useExamSecurity';
 import { useExamSession } from '@/hooks/useExamSession';
-import { getExamDefinitions, type ExamDefinitionListItem } from '@/services/api';
+import {
+  getExamDefinitions,
+  type ExamDefinitionListItem,
+} from '@/services/api';
 
 /**
  * Trang thi: vào THẲNG phần làm bài (đã bỏ màn kiểm tra thiết bị — không cần
@@ -80,7 +89,7 @@ function ExamSessionView({ examId }: { examId: string }) {
     if (q.type === 'SINGLE_CHOICE' || q.type === 'TRUE_FALSE') {
       newValue = [key];
     } else if (currentAnswers.includes(key)) {
-      newValue = currentAnswers.filter(k => k !== key);
+      newValue = currentAnswers.filter((k) => k !== key);
     } else {
       newValue = [...currentAnswers, key];
     }
@@ -88,7 +97,7 @@ function ExamSessionView({ examId }: { examId: string }) {
   };
 
   const toggleFlag = () => {
-    setFlagged(prev => {
+    setFlagged((prev) => {
       const newFlagged = new Set(prev);
       if (newFlagged.has(safeIdx)) {
         newFlagged.delete(safeIdx);
@@ -124,7 +133,7 @@ function ExamSessionView({ examId }: { examId: string }) {
   const answeredSet = new Set<number>();
   Object.entries(answers).forEach(([qId, ans]) => {
     if (ans.length > 0) {
-      const idx = questions.findIndex(q => q.id === qId);
+      const idx = questions.findIndex((q) => q.id === qId);
       if (idx !== -1) answeredSet.add(idx);
     }
   });
@@ -139,7 +148,8 @@ function ExamSessionView({ examId }: { examId: string }) {
             <Lock className="w-6 h-6 text-red-600" />
           </div>
           <p className="text-[var(--text-primary)] font-medium">
-            Bạn đã hoàn thành bài thi này. Bạn không thể vào thi lại vì đã hết số lần thi được phép.
+            Bạn đã hoàn thành bài thi này. Bạn không thể vào thi lại vì đã hết
+            số lần thi được phép.
           </p>
           <button
             onClick={() => router.push('/')}
@@ -194,7 +204,7 @@ function ExamSessionView({ examId }: { examId: string }) {
             subjectCode: examMeta?.code ?? '—',
             duration: examMeta?.durationMinutes ?? 60,
             totalQuestions: totalQuestions,
-            maxScore: 10
+            maxScore: 10,
           }}
           answeredCount={answeredSet.size}
         />
@@ -207,7 +217,8 @@ function ExamSessionView({ examId }: { examId: string }) {
             </h1>
             {examMeta && (
               <p className="text-[13px] text-[var(--text-secondary)] font-medium mt-1">
-                Mã đề: {examMeta.code} · {totalQuestions} câu · {examMeta.durationMinutes} phút
+                Mã đề: {examMeta.code} · {totalQuestions} câu ·{' '}
+                {examMeta.durationMinutes} phút
               </p>
             )}
           </div>
@@ -248,9 +259,11 @@ function ExamSessionView({ examId }: { examId: string }) {
             <button
               onClick={toggleFlag}
               className={`inline-flex items-center gap-2 px-6 py-3 font-semibold rounded-[14px] border transition-all
-                ${flagged.has(safeIdx)
-                  ? 'border-amber-500 text-amber-700 bg-amber-100 dark:border-amber-500/60 dark:text-amber-300 dark:bg-amber-500/20'
-                  : 'bg-amber-50 border-amber-400/50 text-amber-700 hover:bg-amber-100 hover:border-amber-500 dark:bg-amber-500/10 dark:border-amber-500/30 dark:text-amber-300 dark:hover:bg-amber-500/20'}
+                ${
+                  flagged.has(safeIdx)
+                    ? 'border-amber-500 text-amber-700 bg-amber-100 dark:border-amber-500/60 dark:text-amber-300 dark:bg-amber-500/20'
+                    : 'bg-amber-50 border-amber-400/50 text-amber-700 hover:bg-amber-100 hover:border-amber-500 dark:bg-amber-500/10 dark:border-amber-500/30 dark:text-amber-300 dark:hover:bg-amber-500/20'
+                }
               `}
             >
               <Bookmark className="w-[18px] h-[18px]" /> Đánh dấu

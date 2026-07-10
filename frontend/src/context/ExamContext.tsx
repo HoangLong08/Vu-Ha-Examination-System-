@@ -38,7 +38,13 @@ interface ExamState {
 }
 
 type ExamAction =
-  | { type: 'INIT_EXAM'; payload: Omit<ExamState, 'answers' | 'currentIndex' | 'flagged' | 'isActive'> }
+  | {
+      type: 'INIT_EXAM';
+      payload: Omit<
+        ExamState,
+        'answers' | 'currentIndex' | 'flagged' | 'isActive'
+      >;
+    }
   | { type: 'SET_ANSWER'; payload: { questionId: string; answer: string[] } }
   | { type: 'GO_TO_QUESTION'; payload: number }
   | { type: 'TOGGLE_FLAG'; payload: number }
@@ -82,7 +88,10 @@ function examReducer(state: ExamState, action: ExamAction): ExamState {
     case 'GO_TO_QUESTION':
       return {
         ...state,
-        currentIndex: Math.max(0, Math.min(action.payload, state.questions.length - 1)),
+        currentIndex: Math.max(
+          0,
+          Math.min(action.payload, state.questions.length - 1),
+        ),
       };
     case 'TOGGLE_FLAG': {
       const newFlagged = new Set(state.flagged);
@@ -106,7 +115,9 @@ function examReducer(state: ExamState, action: ExamAction): ExamState {
 }
 
 interface ExamContextType extends ExamState {
-  initExam: (data: Omit<ExamState, 'answers' | 'currentIndex' | 'flagged' | 'isActive'>) => void;
+  initExam: (
+    data: Omit<ExamState, 'answers' | 'currentIndex' | 'flagged' | 'isActive'>,
+  ) => void;
   setAnswer: (questionId: string, answer: string[]) => void;
   goToQuestion: (index: number) => void;
   toggleFlag: (index: number) => void;
@@ -119,10 +130,15 @@ export function ExamProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(examReducer, initialState);
 
   const initExam = useCallback(
-    (data: Omit<ExamState, 'answers' | 'currentIndex' | 'flagged' | 'isActive'>) => {
+    (
+      data: Omit<
+        ExamState,
+        'answers' | 'currentIndex' | 'flagged' | 'isActive'
+      >,
+    ) => {
       dispatch({ type: 'INIT_EXAM', payload: data });
     },
-    []
+    [],
   );
 
   const setAnswer = useCallback((questionId: string, answer: string[]) => {

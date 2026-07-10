@@ -57,32 +57,74 @@ describe('answer encode/decode', () => {
 describe('mergeRecovery', () => {
   it('decodes server answers ("A,C" → [A,C]) when there is no local copy', () => {
     const merged = mergeRecovery(
-      [{ questionId: 'q1', answerValue: 'A,C', answeredAt: '2026-06-12T10:00:00.000Z' }],
-      []
+      [
+        {
+          questionId: 'q1',
+          answerValue: 'A,C',
+          answeredAt: '2026-06-12T10:00:00.000Z',
+        },
+      ],
+      [],
     );
     expect(merged).toEqual({ q1: ['A', 'C'] });
   });
 
   it('lets a NEWER local answer win over the server copy', () => {
     const merged = mergeRecovery(
-      [{ questionId: 'q1', answerValue: 'A', answeredAt: '2026-06-12T10:00:00.000Z' }],
-      [{ questionId: 'q1', answerValue: ['B'], timestamp: '2026-06-12T10:05:00.000Z' }]
+      [
+        {
+          questionId: 'q1',
+          answerValue: 'A',
+          answeredAt: '2026-06-12T10:00:00.000Z',
+        },
+      ],
+      [
+        {
+          questionId: 'q1',
+          answerValue: ['B'],
+          timestamp: '2026-06-12T10:05:00.000Z',
+        },
+      ],
     );
     expect(merged.q1).toEqual(['B']);
   });
 
   it('keeps the server copy when the local answer is OLDER', () => {
     const merged = mergeRecovery(
-      [{ questionId: 'q1', answerValue: 'A', answeredAt: '2026-06-12T10:05:00.000Z' }],
-      [{ questionId: 'q1', answerValue: ['B'], timestamp: '2026-06-12T10:00:00.000Z' }]
+      [
+        {
+          questionId: 'q1',
+          answerValue: 'A',
+          answeredAt: '2026-06-12T10:05:00.000Z',
+        },
+      ],
+      [
+        {
+          questionId: 'q1',
+          answerValue: ['B'],
+          timestamp: '2026-06-12T10:00:00.000Z',
+        },
+      ],
     );
     expect(merged.q1).toEqual(['A']);
   });
 
   it('adds local-only answers that the server has never seen', () => {
     const merged = mergeRecovery(
-      [{ questionId: 'q1', answerValue: 'A', answeredAt: '2026-06-12T10:00:00.000Z' }],
-      [{ questionId: 'q2', answerValue: ['D'], timestamp: '2026-06-12T10:01:00.000Z' }]
+      [
+        {
+          questionId: 'q1',
+          answerValue: 'A',
+          answeredAt: '2026-06-12T10:00:00.000Z',
+        },
+      ],
+      [
+        {
+          questionId: 'q2',
+          answerValue: ['D'],
+          timestamp: '2026-06-12T10:01:00.000Z',
+        },
+      ],
     );
     expect(merged).toEqual({ q1: ['A'], q2: ['D'] });
   });
@@ -110,7 +152,9 @@ describe('useExamSession — start exam blocked by max attempt', () => {
         },
       },
     });
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
 
     const { result } = renderHook(() => useExamSession('exam-1'));
 
@@ -122,7 +166,7 @@ describe('useExamSession — start exam blocked by max attempt', () => {
     expect(result.current.loading).toBe(false);
     expect(result.current.errorCode).toBe('EXAM_ATTEMPT_LIMIT_REACHED');
     expect(result.current.error).toBe(
-      'Bạn đã hoàn thành bài thi này và đã sử dụng hết số lần thi được phép.'
+      'Bạn đã hoàn thành bài thi này và đã sử dụng hết số lần thi được phép.',
     );
     expect(result.current.attemptId).toBeNull();
     expect(api.getAttemptAnswers).not.toHaveBeenCalled();
@@ -135,9 +179,14 @@ describe('useExamSession — start exam blocked by max attempt', () => {
 
   it('DOES log to console for a genuinely unexpected startExam error (e.g. 500 / network)', async () => {
     (api.startExam as ReturnType<typeof vi.fn>).mockRejectedValue({
-      response: { status: 500, data: { statusCode: 500, message: 'Internal server error' } },
+      response: {
+        status: 500,
+        data: { statusCode: 500, message: 'Internal server error' },
+      },
     });
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
 
     const { result } = renderHook(() => useExamSession('exam-1'));
 
@@ -192,7 +241,9 @@ describe('useExamSession — submit on timer expiry (auto-submit)', () => {
       status: 'SUBMITTED',
       submittedAt: new Date().toISOString(),
     });
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
 
     await expect(result.current.submit()).resolves.toMatchObject({
       status: 'SUBMITTED',
@@ -223,8 +274,18 @@ describe('useAutoSave', () => {
 
   it('flushes unsynced local answers via autosaveAnswers with encoded CHUỖI + ISO timestamp', async () => {
     (idb.getUnsynced as ReturnType<typeof vi.fn>).mockResolvedValue([
-      { questionId: 'q1', answerValue: ['A', 'C'], timestamp: '2026-06-12T10:00:00.000Z', isSynced: 0 },
-      { questionId: 'q2', answerValue: ['B'], timestamp: '2026-06-12T10:01:00.000Z', isSynced: 0 },
+      {
+        questionId: 'q1',
+        answerValue: ['A', 'C'],
+        timestamp: '2026-06-12T10:00:00.000Z',
+        isSynced: 0,
+      },
+      {
+        questionId: 'q2',
+        answerValue: ['B'],
+        timestamp: '2026-06-12T10:01:00.000Z',
+        isSynced: 0,
+      },
     ]);
     (api.autosaveAnswers as ReturnType<typeof vi.fn>).mockResolvedValue({});
 
@@ -236,7 +297,11 @@ describe('useAutoSave', () => {
 
     expect(api.autosaveAnswers).toHaveBeenCalledTimes(1);
     expect(api.autosaveAnswers).toHaveBeenCalledWith('attempt-xyz', [
-      { questionId: 'q1', answer: 'A,C', timestamp: '2026-06-12T10:00:00.000Z' },
+      {
+        questionId: 'q1',
+        answer: 'A,C',
+        timestamp: '2026-06-12T10:00:00.000Z',
+      },
       { questionId: 'q2', answer: 'B', timestamp: '2026-06-12T10:01:00.000Z' },
     ]);
     // Each flushed answer is marked synced afterwards.
@@ -258,9 +323,16 @@ describe('useAutoSave', () => {
 
   it('does NOT mark answers synced when the server call fails (kept for retry)', async () => {
     (idb.getUnsynced as ReturnType<typeof vi.fn>).mockResolvedValue([
-      { questionId: 'q1', answerValue: ['A'], timestamp: '2026-06-12T10:00:00.000Z', isSynced: 0 },
+      {
+        questionId: 'q1',
+        answerValue: ['A'],
+        timestamp: '2026-06-12T10:00:00.000Z',
+        isSynced: 0,
+      },
     ]);
-    (api.autosaveAnswers as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('network'));
+    (api.autosaveAnswers as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new Error('network'),
+    );
 
     const { result } = renderHook(() => useAutoSave('attempt-xyz', true));
     await act(async () => {
@@ -361,7 +433,7 @@ describe('useExamSession — no answer mutations survive submit start', () => {
     (api.submitAttempt as ReturnType<typeof vi.fn>).mockReturnValue(
       new Promise((resolve) => {
         resolveSubmit = resolve;
-      })
+      }),
     );
 
     let p1!: Promise<unknown>;
@@ -386,9 +458,11 @@ describe('useExamSession — no answer mutations survive submit start', () => {
     (api.saveAnswer as ReturnType<typeof vi.fn>).mockReturnValue(
       new Promise((_resolve, reject) => {
         rejectSave = reject;
-      })
+      }),
     );
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
 
     act(() => {
       // debounce=false -> fires the save immediately, leaving it "in flight".
@@ -403,7 +477,12 @@ describe('useExamSession — no answer mutations survive submit start', () => {
     // The in-flight request finally settles AFTER submit began, with the
     // backend's expected "Attempt is SUBMITTED" rejection.
     await act(async () => {
-      rejectSave({ response: { status: 400, data: { message: 'Attempt is SUBMITTED, cannot modify' } } });
+      rejectSave({
+        response: {
+          status: 400,
+          data: { message: 'Attempt is SUBMITTED, cannot modify' },
+        },
+      });
       await Promise.resolve();
       await Promise.resolve();
     });

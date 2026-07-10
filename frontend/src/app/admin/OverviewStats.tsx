@@ -1,7 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Database, ClipboardList, TrendingUp, CheckCircle2, Loader2 } from 'lucide-react';
+import {
+  Database,
+  ClipboardList,
+  TrendingUp,
+  CheckCircle2,
+  Loader2,
+} from 'lucide-react';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { getExamDefinitions, getReportOverview } from '@/services/api';
 
@@ -55,10 +61,30 @@ export function OverviewStats() {
   }, []);
 
   const cards = [
-    { icon: Database, color: 'blue', value: String(stats.exams), label: 'Tổng số đề thi' },
-    { icon: ClipboardList, color: 'emerald', value: String(stats.submissions), label: 'Lượt đã nộp bài' },
-    { icon: TrendingUp, color: 'amber', value: stats.avg.toFixed(2), label: 'Điểm trung bình' },
-    { icon: CheckCircle2, color: 'rose', value: `${stats.passRate}%`, label: 'Tỉ lệ đạt (≥5)' },
+    {
+      icon: Database,
+      color: 'blue',
+      value: String(stats.exams),
+      label: 'Tổng số đề thi',
+    },
+    {
+      icon: ClipboardList,
+      color: 'emerald',
+      value: String(stats.submissions),
+      label: 'Lượt đã nộp bài',
+    },
+    {
+      icon: TrendingUp,
+      color: 'amber',
+      value: stats.avg.toFixed(2),
+      label: 'Điểm trung bình',
+    },
+    {
+      icon: CheckCircle2,
+      color: 'rose',
+      value: `${stats.passRate}%`,
+      label: 'Tỉ lệ đạt (≥5)',
+    },
   ];
   const tint: Record<string, string> = {
     blue: 'bg-blue-500/12 text-blue-500',
@@ -73,13 +99,21 @@ export function OverviewStats() {
         const Icon = c.icon;
         return (
           <GlassCard key={c.label} className="relative overflow-hidden">
-            <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-3.5 ${tint[c.color]}`}>
+            <div
+              className={`w-11 h-11 rounded-xl flex items-center justify-center mb-3.5 ${tint[c.color]}`}
+            >
               <Icon className="w-[22px] h-[22px]" />
             </div>
             <div className="text-[28px] font-bold text-[var(--text-primary)] leading-none mb-1 min-h-[28px]">
-              {loading ? <Loader2 className="w-5 h-5 animate-spin text-[var(--text-muted)]" /> : c.value}
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin text-[var(--text-muted)]" />
+              ) : (
+                c.value
+              )}
             </div>
-            <div className="text-[13px] font-medium text-[var(--text-secondary)]">{c.label}</div>
+            <div className="text-[13px] font-medium text-[var(--text-secondary)]">
+              {c.label}
+            </div>
           </GlassCard>
         );
       })}

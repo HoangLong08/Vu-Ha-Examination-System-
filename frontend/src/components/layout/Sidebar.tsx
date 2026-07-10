@@ -54,9 +54,7 @@ export function Sidebar({ isCollapsed = false, onToggle }: SidebarProps) {
 
   let mainNav = [];
   if (isInvigilator) {
-    mainNav = [
-      { label: 'Phòng thi', href: '/invigilator', icon: Users },
-    ];
+    mainNav = [{ label: 'Phòng thi', href: '/invigilator', icon: Users }];
   } else if (isExaminer) {
     mainNav = [
       { label: 'Tổng quan', href: '/admin?tab=overview', icon: BarChart3 },
@@ -76,19 +74,27 @@ export function Sidebar({ isCollapsed = false, onToggle }: SidebarProps) {
   }
 
   return (
-    <aside className={`glass-sidebar h-screen fixed left-0 top-0 z-50 flex flex-col transition-all duration-300 ${isCollapsed ? 'w-[80px]' : 'w-[260px]'}`}>
+    <aside
+      className={`glass-sidebar h-screen fixed left-0 top-0 z-50 flex flex-col transition-all duration-300 ${isCollapsed ? 'w-[80px]' : 'w-[260px]'}`}
+    >
       {/* Toggle Button */}
       {onToggle && (
-        <button 
+        <button
           onClick={onToggle}
           className="absolute -right-3.5 top-7 bg-brand-600 text-white p-1 rounded-full shadow-md hover:bg-brand-700 transition-colors z-50"
         >
-          {isCollapsed ? <ChevronRight className="w-4 h-4"/> : <ChevronLeft className="w-4 h-4"/>}
+          {isCollapsed ? (
+            <ChevronRight className="w-4 h-4" />
+          ) : (
+            <ChevronLeft className="w-4 h-4" />
+          )}
         </button>
       )}
 
       {/* Brand */}
-      <div className={`py-5 flex items-center border-b border-[var(--border-subtle)] transition-all ${isCollapsed ? 'px-0 justify-center' : 'px-5 gap-3'}`}>
+      <div
+        className={`py-5 flex items-center border-b border-[var(--border-subtle)] transition-all ${isCollapsed ? 'px-0 justify-center' : 'px-5 gap-3'}`}
+      >
         <BrandLogo size={42} bare />
         {!isCollapsed && (
           <div className="animate-[fade-in_0.3s_ease]">
@@ -136,7 +142,6 @@ export function Sidebar({ isCollapsed = false, onToggle }: SidebarProps) {
             );
           })}
         </div>
-
       </nav>
 
       {/* System Info Footer */}

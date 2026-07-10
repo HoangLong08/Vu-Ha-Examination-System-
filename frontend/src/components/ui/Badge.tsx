@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 
-type BadgeVariant = 'active' | 'upcoming' | 'completed' | 'ended' | 'easy' | 'medium' | 'hard';
+type BadgeVariant =
+  'active' | 'upcoming' | 'completed' | 'ended' | 'easy' | 'medium' | 'hard';
 
 interface BadgeProps {
   children: ReactNode;

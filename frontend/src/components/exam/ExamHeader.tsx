@@ -42,8 +42,10 @@ export function ExamHeader({
         <Timer initialSeconds={timerSeconds} onTimeUp={onTimeUp} />
         <div className="text-[13px] text-[var(--text-secondary)] font-semibold hidden sm:block">
           Câu{' '}
-          <span className="text-brand-600 dark:text-blue-400">{currentQuestion}</span> /{' '}
-          <span>{totalQuestions}</span>
+          <span className="text-brand-600 dark:text-blue-400">
+            {currentQuestion}
+          </span>{' '}
+          / <span>{totalQuestions}</span>
         </div>
       </div>
 

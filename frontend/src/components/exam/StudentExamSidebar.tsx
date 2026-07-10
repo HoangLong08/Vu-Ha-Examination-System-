@@ -13,7 +13,10 @@ interface StudentExamSidebarProps {
   answeredCount?: number;
 }
 
-export function StudentExamSidebar({ examInfo, answeredCount }: StudentExamSidebarProps) {
+export function StudentExamSidebar({
+  examInfo,
+  answeredCount,
+}: StudentExamSidebarProps) {
   const { user } = useAuth();
 
   return (
@@ -22,7 +25,11 @@ export function StudentExamSidebar({ examInfo, answeredCount }: StudentExamSideb
         <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-3xl shadow-lg border-4 border-[var(--bg-glass)] mb-3 overflow-hidden relative">
           <div className="absolute inset-0 bg-white/10" />
           {user?.avatar ? (
-            <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+            <img
+              src={user.avatar}
+              alt="Avatar"
+              className="w-full h-full object-cover"
+            />
           ) : (
             user?.firstName?.charAt(0) || 'U'
           )}
@@ -41,8 +48,12 @@ export function StudentExamSidebar({ examInfo, answeredCount }: StudentExamSideb
             <User className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wider font-semibold mb-0.5">Mã sinh viên</p>
-            <p className="text-[13px] font-bold text-[var(--text-primary)] truncate">SV21103011</p>
+            <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wider font-semibold mb-0.5">
+              Mã sinh viên
+            </p>
+            <p className="text-[13px] font-bold text-[var(--text-primary)] truncate">
+              SV21103011
+            </p>
           </div>
         </div>
 
@@ -51,8 +62,12 @@ export function StudentExamSidebar({ examInfo, answeredCount }: StudentExamSideb
             <BookOpen className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wider font-semibold mb-0.5">Lớp sinh hoạt</p>
-            <p className="text-[13px] font-bold text-[var(--text-primary)] truncate">{user?.studentInfo?.classId || '21CT111'}</p>
+            <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wider font-semibold mb-0.5">
+              Lớp sinh hoạt
+            </p>
+            <p className="text-[13px] font-bold text-[var(--text-primary)] truncate">
+              {user?.studentInfo?.classId || '21CT111'}
+            </p>
           </div>
         </div>
       </div>
@@ -67,7 +82,10 @@ export function StudentExamSidebar({ examInfo, answeredCount }: StudentExamSideb
           <div className="bg-[var(--bg-glass-heavy)] border border-[var(--border-subtle)] rounded-xl p-4">
             <InfoRow label="Môn thi" value={examInfo.subjectCode} />
             <InfoRow label="Thời gian" value={`${examInfo.duration} phút`} />
-            <InfoRow label="Tổng câu" value={`${examInfo.totalQuestions} câu`} />
+            <InfoRow
+              label="Tổng câu"
+              value={`${examInfo.totalQuestions} câu`}
+            />
             <InfoRow label="Điểm tối đa" value={String(examInfo.maxScore)} />
             {answeredCount !== undefined && (
               <InfoRow

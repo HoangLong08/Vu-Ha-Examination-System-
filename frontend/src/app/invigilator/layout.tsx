@@ -10,10 +10,13 @@ export default function InvigilatorLayout({
   children: React.ReactNode;
 }) {
   const { user } = useAuth();
-  
+
   return (
     <ProtectedRoute allowedRoles={['INVIGILATOR']}>
-      <DashboardLayout title="Danh sách Phòng thi" subtitle={`Giám thị: ${user?.lastName || ''} ${user?.firstName || ''}`}>
+      <DashboardLayout
+        title="Danh sách Phòng thi"
+        subtitle={`Giám thị: ${user?.lastName || ''} ${user?.firstName || ''}`}
+      >
         {children}
       </DashboardLayout>
     </ProtectedRoute>

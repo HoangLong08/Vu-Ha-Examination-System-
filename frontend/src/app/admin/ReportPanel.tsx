@@ -200,16 +200,34 @@ export function ReportPanel() {
       <Modal
         isOpen={!!selected && !loadingDetail}
         onClose={() => setSelected(null)}
-        title={selected ? `Phổ điểm — ${selected.title} (${selected.code})` : ''}
+        title={
+          selected ? `Phổ điểm — ${selected.title} (${selected.code})` : ''
+        }
         className="max-w-2xl"
       >
         {selected && (
           <div className="flex flex-col gap-5">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <Stat icon={<Users className="w-4 h-4" />} label="Số bài" value={String(selected.count)} />
-              <Stat icon={<TrendingUp className="w-4 h-4" />} label="Điểm TB" value={String(selected.average)} />
-              <Stat icon={<BarChart3 className="w-4 h-4" />} label="Cao / Thấp" value={`${selected.max} / ${selected.min}`} />
-              <Stat icon={<CheckCircle2 className="w-4 h-4" />} label="Tỉ lệ đạt" value={`${selected.passRate}%`} />
+              <Stat
+                icon={<Users className="w-4 h-4" />}
+                label="Số bài"
+                value={String(selected.count)}
+              />
+              <Stat
+                icon={<TrendingUp className="w-4 h-4" />}
+                label="Điểm TB"
+                value={String(selected.average)}
+              />
+              <Stat
+                icon={<BarChart3 className="w-4 h-4" />}
+                label="Cao / Thấp"
+                value={`${selected.max} / ${selected.min}`}
+              />
+              <Stat
+                icon={<CheckCircle2 className="w-4 h-4" />}
+                label="Tỉ lệ đạt"
+                value={`${selected.passRate}%`}
+              />
             </div>
 
             <div className="flex flex-col gap-2.5">
