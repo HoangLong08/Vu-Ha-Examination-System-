@@ -10,10 +10,15 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const { user } = useAuth();
-  
+
   return (
     <ProtectedRoute allowedRoles={['EXAM_OFFICER', 'ADMIN']}>
-      <DashboardLayout title="Quản trị Hệ thống" subtitle={`${user?.lastName || ''} ${user?.firstName || ''}`.trim() || undefined}>
+      <DashboardLayout
+        title="Quản trị Hệ thống"
+        subtitle={
+          `${user?.lastName || ''} ${user?.firstName || ''}`.trim() || undefined
+        }
+      >
         {children}
       </DashboardLayout>
     </ProtectedRoute>

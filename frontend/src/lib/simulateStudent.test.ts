@@ -4,7 +4,7 @@ import { simulateStudent } from './simulateStudent';
 describe('simulateStudent', () => {
   it('deterministic theo seed', () => {
     expect(simulateStudent('sv001@dau.edu.vn')).toEqual(
-      simulateStudent('sv001@dau.edu.vn')
+      simulateStudent('sv001@dau.edu.vn'),
     );
   });
 
@@ -18,7 +18,10 @@ describe('simulateStudent', () => {
 
   it('đa dạng giữa các tài khoản', () => {
     const codes = new Set(
-      Array.from({ length: 20 }, (_, i) => simulateStudent(`sv${i}`).studentCode)
+      Array.from(
+        { length: 20 },
+        (_, i) => simulateStudent(`sv${i}`).studentCode,
+      ),
     );
     expect(codes.size).toBeGreaterThan(8);
   });

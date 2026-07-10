@@ -2,7 +2,22 @@
 
 import { useEffect, useState } from 'react';
 import { GlassCard } from '@/components/ui/GlassCard';
-import { Database, FileText, LayoutDashboard, CalendarDays, BookOpen, Eye, EyeOff, Send, CheckCircle2, Loader2, AlertCircle, Settings2, BarChart3, ClipboardList } from 'lucide-react';
+import {
+  Database,
+  FileText,
+  LayoutDashboard,
+  CalendarDays,
+  BookOpen,
+  Eye,
+  EyeOff,
+  Send,
+  CheckCircle2,
+  Loader2,
+  AlertCircle,
+  Settings2,
+  BarChart3,
+  ClipboardList,
+} from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { ReportPanel } from './ReportPanel';
 import { ExamManagement } from './ExamManagement';
@@ -21,7 +36,8 @@ import {
 /** Đề demo CS101 dùng cho cấu hình Hiện/Ẩn kết quả (FR-L-003). */
 const DEMO_EXAM_DEF_ID = '11111111-1111-4111-8111-111111111111';
 
-type TabType = 'overview' | 'exams' | 'schedules' | 'submissions' | 'reports' | 'essays';
+type TabType =
+  'overview' | 'exams' | 'schedules' | 'submissions' | 'reports' | 'essays';
 
 import { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -98,7 +114,7 @@ function ExamConfigCard() {
       });
       setMatrixId(def.examCoreMatrixId ?? '');
       setSourceMsg(
-        nextMatrixId ? 'Đã gắn ma trận đề.' : 'Đã gỡ liên kết ma trận.'
+        nextMatrixId ? 'Đã gắn ma trận đề.' : 'Đã gỡ liên kết ma trận.',
       );
     } catch {
       setError('Lưu nguồn câu hỏi thất bại. Vui lòng thử lại.');
@@ -129,8 +145,12 @@ function ExamConfigCard() {
           <Settings2 className="w-5 h-5" />
         </div>
         <div>
-          <h2 className="text-lg font-bold text-[var(--text-primary)]">Cấu hình kỳ thi — CS101</h2>
-          <p className="text-[13px] text-[var(--text-secondary)]">Hiện/Ẩn kết quả cho sinh viên và công bố điểm.</p>
+          <h2 className="text-lg font-bold text-[var(--text-primary)]">
+            Cấu hình kỳ thi — CS101
+          </h2>
+          <p className="text-[13px] text-[var(--text-secondary)]">
+            Hiện/Ẩn kết quả cho sinh viên và công bố điểm.
+          </p>
         </div>
       </div>
 
@@ -142,13 +162,23 @@ function ExamConfigCard() {
         <>
           <div className="flex items-center justify-between gap-4 p-4 rounded-[14px] bg-[var(--bg-glass)] border border-[var(--border-subtle)]">
             <div className="flex items-center gap-3 min-w-0">
-              <div className={`w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0 ${showResult ? 'bg-emerald-500/12 text-emerald-600' : 'bg-slate-500/12 text-slate-500'}`}>
-                {showResult ? <Eye className="w-[18px] h-[18px]" /> : <EyeOff className="w-[18px] h-[18px]" />}
+              <div
+                className={`w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0 ${showResult ? 'bg-emerald-500/12 text-emerald-600' : 'bg-slate-500/12 text-slate-500'}`}
+              >
+                {showResult ? (
+                  <Eye className="w-[18px] h-[18px]" />
+                ) : (
+                  <EyeOff className="w-[18px] h-[18px]" />
+                )}
               </div>
               <div className="min-w-0">
-                <p className="text-[14px] font-semibold text-[var(--text-primary)]">Cho phép sinh viên xem điểm</p>
+                <p className="text-[14px] font-semibold text-[var(--text-primary)]">
+                  Cho phép sinh viên xem điểm
+                </p>
                 <p className="text-[12px] text-[var(--text-secondary)]">
-                  {showResult ? 'Sinh viên thấy điểm và đáp án sau khi nộp.' : 'Sinh viên chỉ thấy thông báo hoàn thành.'}
+                  {showResult
+                    ? 'Sinh viên thấy điểm và đáp án sau khi nộp.'
+                    : 'Sinh viên chỉ thấy thông báo hoàn thành.'}
                 </p>
               </div>
             </div>
@@ -161,7 +191,9 @@ function ExamConfigCard() {
               disabled={saving}
               className={`relative shrink-0 inline-flex h-7 w-12 items-center rounded-full transition-colors disabled:opacity-60 ${showResult ? 'bg-emerald-600' : 'bg-slate-300 dark:bg-slate-700'}`}
             >
-              <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${showResult ? 'translate-x-6' : 'translate-x-1'}`} />
+              <span
+                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${showResult ? 'translate-x-6' : 'translate-x-1'}`}
+              />
             </button>
           </div>
 
@@ -178,9 +210,12 @@ function ExamConfigCard() {
                 <Database className="w-[18px] h-[18px]" />
               </div>
               <div className="min-w-0">
-                <p className="text-[14px] font-semibold text-[var(--text-primary)]">Nguồn câu hỏi (ma trận đề)</p>
+                <p className="text-[14px] font-semibold text-[var(--text-primary)]">
+                  Nguồn câu hỏi (ma trận đề)
+                </p>
                 <p className="text-[12px] text-[var(--text-secondary)]">
-                  Gắn ma trận để rút đề theo section/độ khó. Bỏ chọn = nguồn mặc định.
+                  Gắn ma trận để rút đề theo section/độ khó. Bỏ chọn = nguồn mặc
+                  định.
                 </p>
               </div>
             </div>
@@ -217,7 +252,11 @@ function ExamConfigCard() {
               disabled={publishing}
               className="px-5 py-2.5 gap-2 text-sm bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/30 text-white border-0"
             >
-              {publishing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+              {publishing ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
               {publishing ? 'Đang công bố…' : 'Công bố kết quả'}
             </Button>
             {publishMsg && (
@@ -242,7 +281,18 @@ function AdminDashboard() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
-  const activeTab = (['overview', 'exams', 'schedules', 'submissions', 'reports', 'essays'].includes(tabParam as string) ? tabParam : 'overview') as TabType;
+  const activeTab = (
+    [
+      'overview',
+      'exams',
+      'schedules',
+      'submissions',
+      'reports',
+      'essays',
+    ].includes(tabParam as string)
+      ? tabParam
+      : 'overview'
+  ) as TabType;
 
   const handleTabChange = (tab: TabType) => {
     router.push(`/admin?tab=${tab}`);
@@ -257,14 +307,17 @@ function AdminDashboard() {
 
   const renderExams = () => <ExamManagement />;
 
-
   return (
     <div className="flex flex-col gap-6 w-full max-w-6xl mx-auto">
       {/* Header and Tabs */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-2">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] tracking-tight mb-2">Quản trị Khảo thí</h1>
-          <p className="text-[var(--text-secondary)]">Quản lý hệ thống ngân hàng đề thi, lịch thi và theo dõi kỳ thi.</p>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] tracking-tight mb-2">
+            Quản trị Khảo thí
+          </h1>
+          <p className="text-[var(--text-secondary)]">
+            Quản lý hệ thống ngân hàng đề thi, lịch thi và theo dõi kỳ thi.
+          </p>
         </div>
       </div>
 
@@ -347,7 +400,13 @@ function AdminDashboard() {
 
 export default function AdminPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center p-12 text-[var(--text-secondary)]">Đang tải dữ liệu...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center p-12 text-[var(--text-secondary)]">
+          Đang tải dữ liệu...
+        </div>
+      }
+    >
       <AdminDashboard />
     </Suspense>
   );

@@ -226,7 +226,11 @@ export function ExamManagement() {
         </GlassCard>
       )}
 
-      <Modal isOpen={open} onClose={() => setOpen(false)} title="Tạo Đề Thi mới">
+      <Modal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        title="Tạo Đề Thi mới"
+      >
         <div className="flex flex-col gap-4">
           <Field label="Mã đề">
             <input
@@ -280,7 +284,11 @@ export function ExamManagement() {
           )}
 
           <div className="flex justify-end gap-3 pt-2">
-            <Button variant="secondary" onClick={() => setOpen(false)} className="px-4 py-2 text-sm">
+            <Button
+              variant="secondary"
+              onClick={() => setOpen(false)}
+              className="px-4 py-2 text-sm"
+            >
               Huỷ
             </Button>
             <Button
@@ -289,7 +297,11 @@ export function ExamManagement() {
               disabled={saving}
               className="px-5 py-2 gap-2 text-sm"
             >
-              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+              {saving ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Plus className="w-4 h-4" />
+              )}
               Tạo đề
             </Button>
           </div>
@@ -299,7 +311,13 @@ export function ExamManagement() {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-[13px] font-medium text-[var(--text-secondary)]">

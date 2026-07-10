@@ -63,7 +63,7 @@ describe('ReportPanel (EPIC-20)', () => {
 
     await waitFor(() => expect(getExamReport).toHaveBeenCalledWith('a'));
     expect(
-      await screen.findByText(/Phổ điểm — Lịch sử Đảng/i)
+      await screen.findByText(/Phổ điểm — Lịch sử Đảng/i),
     ).toBeInTheDocument();
   });
 
@@ -71,7 +71,7 @@ describe('ReportPanel (EPIC-20)', () => {
     getReportOverview.mockResolvedValue([]);
     render(<ReportPanel />);
     expect(
-      await screen.findByText(/Chưa có bài thi nào được nộp/i)
+      await screen.findByText(/Chưa có bài thi nào được nộp/i),
     ).toBeInTheDocument();
   });
 
@@ -79,7 +79,7 @@ describe('ReportPanel (EPIC-20)', () => {
     getReportOverview.mockRejectedValue(new Error('boom'));
     render(<ReportPanel />);
     expect(
-      await screen.findByText(/Không tải được báo cáo/i)
+      await screen.findByText(/Không tải được báo cáo/i),
     ).toBeInTheDocument();
   });
 });

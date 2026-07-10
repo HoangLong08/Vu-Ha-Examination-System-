@@ -1,6 +1,15 @@
 'use client';
 
-import { ShieldCheck, User, Lock, LogIn, Loader2, GraduationCap, Eye, EyeOff } from 'lucide-react';
+import {
+  ShieldCheck,
+  User,
+  Lock,
+  LogIn,
+  Loader2,
+  GraduationCap,
+  Eye,
+  EyeOff,
+} from 'lucide-react';
 import { BrandLogo } from '@/components/ui/BrandLogo';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useAuth } from '@/context/AuthContext';
@@ -37,7 +46,7 @@ export default function LoginPage() {
   // Áp phiên đăng nhập + điều hướng theo vai trò (dùng chung cho mọi luồng).
   const applySession = (
     user: Awaited<ReturnType<typeof apiLogin>>['user'],
-    accessToken: string
+    accessToken: string,
   ) => {
     login(
       {
@@ -47,7 +56,7 @@ export default function LoginPage() {
         lastName: user.lastName ?? '',
         roles: user.roles ?? [],
       },
-      accessToken
+      accessToken,
     );
     const roles = user.roles ?? [];
     if (roles.includes('INVIGILATOR')) router.push('/invigilator');
@@ -90,7 +99,9 @@ export default function LoginPage() {
       const { user, accessToken } = await apiLogin(email, password || 'demo');
       applySession(user, accessToken);
     } catch {
-      setFormError('Đăng nhập thất bại — kiểm tra backend đang chạy (cổng 3001).');
+      setFormError(
+        'Đăng nhập thất bại — kiểm tra backend đang chạy (cổng 3001).',
+      );
     } finally {
       setSubmitting(false);
     }
@@ -103,7 +114,8 @@ export default function LoginPage() {
         <div
           className="absolute w-[400px] h-[400px] rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(139,92,246,0.10) 0%, transparent 70%)',
+            background:
+              'radial-gradient(circle, rgba(139,92,246,0.10) 0%, transparent 70%)',
             top: '40%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
@@ -114,7 +126,8 @@ export default function LoginPage() {
         <div
           className="absolute w-[300px] h-[300px] rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(251,191,36,0.08) 0%, transparent 70%)',
+            background:
+              'radial-gradient(circle, rgba(251,191,36,0.08) 0%, transparent 70%)',
             top: '10%',
             left: '20%',
             filter: 'blur(80px)',
@@ -146,7 +159,10 @@ export default function LoginPage() {
           <div className="w-full h-px bg-gradient-to-r from-transparent via-[var(--border-subtle)] to-transparent my-6" />
 
           {/* Form đăng nhập (tên đăng nhập + mật khẩu) — tạo nhiều tài khoản test */}
-          <form onSubmit={handleFormLogin} className="flex flex-col gap-3 text-left">
+          <form
+            onSubmit={handleFormLogin}
+            className="flex flex-col gap-3 text-left"
+          >
             <div className="relative">
               <User className="w-[18px] h-[18px] text-[var(--text-secondary)] absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
@@ -182,7 +198,9 @@ export default function LoginPage() {
               </button>
             </div>
             {formError && (
-              <p className="text-[13px] font-medium text-rose-600">{formError}</p>
+              <p className="text-[13px] font-medium text-rose-600">
+                {formError}
+              </p>
             )}
             <button
               type="submit"
@@ -239,7 +257,6 @@ export default function LoginPage() {
               Khảo thí
             </button>
           </div>
-
         </div>
 
         {/* Footer */}

@@ -59,7 +59,8 @@ function fmtTime(iso: string | null): string {
  */
 export function SubmissionsPanel() {
   const [exams, setExams] = useState<ExamDefinitionListItem[]>([]);
-  const [selectedExam, setSelectedExam] = useState<ExamDefinitionListItem | null>(null);
+  const [selectedExam, setSelectedExam] =
+    useState<ExamDefinitionListItem | null>(null);
   const [rows, setRows] = useState<ExamAttemptRow[]>([]);
   const [loadingList, setLoadingList] = useState(true);
   const [loadingRows, setLoadingRows] = useState(false);
@@ -95,9 +96,12 @@ export function SubmissionsPanel() {
             <ClipboardList className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-[var(--text-primary)]">Bài làm sinh viên</h2>
+            <h2 className="text-lg font-bold text-[var(--text-primary)]">
+              Bài làm sinh viên
+            </h2>
             <p className="text-[13px] text-[var(--text-secondary)]">
-              Chọn đề để xem ai đã/đang làm, trả lời bao nhiêu câu và được bao nhiêu điểm.
+              Chọn đề để xem ai đã/đang làm, trả lời bao nhiêu câu và được bao
+              nhiêu điểm.
             </p>
           </div>
         </div>
@@ -111,7 +115,9 @@ export function SubmissionsPanel() {
             <Loader2 className="w-4 h-4 animate-spin" /> Đang tải danh sách đề…
           </div>
         ) : exams.length === 0 ? (
-          <GlassCard className="p-8 text-center text-[var(--text-secondary)]">Chưa có đề thi nào.</GlassCard>
+          <GlassCard className="p-8 text-center text-[var(--text-secondary)]">
+            Chưa có đề thi nào.
+          </GlassCard>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {exams.map((e) => (
@@ -127,11 +133,19 @@ export function SubmissionsPanel() {
                     </div>
                     <ChevronRight className="w-4 h-4 text-[var(--text-muted)] group-hover:text-brand-600 transition-colors" />
                   </div>
-                  <p className="text-[13px] font-semibold text-brand-600 dark:text-blue-400 mb-0.5">{e.code}</p>
-                  <h3 className="text-[15px] font-bold text-[var(--text-primary)] leading-snug mb-3 line-clamp-2">{e.title}</h3>
+                  <p className="text-[13px] font-semibold text-brand-600 dark:text-blue-400 mb-0.5">
+                    {e.code}
+                  </p>
+                  <h3 className="text-[15px] font-bold text-[var(--text-primary)] leading-snug mb-3 line-clamp-2">
+                    {e.title}
+                  </h3>
                   <div className="flex items-center gap-4 text-[12px] text-[var(--text-muted)] border-t border-[var(--border-subtle)] pt-3">
-                    <span className="flex items-center gap-1"><Hash className="w-3.5 h-3.5" /> {e.totalQuestions} câu</span>
-                    <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {e.durationMinutes}′</span>
+                    <span className="flex items-center gap-1">
+                      <Hash className="w-3.5 h-3.5" /> {e.totalQuestions} câu
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5" /> {e.durationMinutes}′
+                    </span>
                   </div>
                 </GlassCard>
               </button>
@@ -143,7 +157,9 @@ export function SubmissionsPanel() {
   }
 
   // ── CHI TIẾT BÀI LÀM CỦA 1 ĐỀ ────────────────────────────────────────────
-  const submitted = rows.filter((r) => r.status === 'SUBMITTED' || r.status === 'EXPIRED');
+  const submitted = rows.filter(
+    (r) => r.status === 'SUBMITTED' || r.status === 'EXPIRED',
+  );
   const avg =
     submitted.length > 0
       ? submitted.reduce((s, r) => s + (r.score ?? 0), 0) / submitted.length
@@ -162,10 +178,16 @@ export function SubmissionsPanel() {
       </button>
 
       <div>
-        <h2 className="text-2xl font-bold text-[var(--text-primary)]">{selectedExam.title}</h2>
+        <h2 className="text-2xl font-bold text-[var(--text-primary)]">
+          {selectedExam.title}
+        </h2>
         <p className="text-[14px] text-[var(--text-secondary)] mt-0.5">
-          <span className="font-semibold text-brand-600 dark:text-blue-400">{selectedExam.code}</span>
-          {' · '}{selectedExam.totalQuestions} câu · {selectedExam.durationMinutes} phút
+          <span className="font-semibold text-brand-600 dark:text-blue-400">
+            {selectedExam.code}
+          </span>
+          {' · '}
+          {selectedExam.totalQuestions} câu · {selectedExam.durationMinutes}{' '}
+          phút
         </p>
       </div>
 
@@ -187,13 +209,16 @@ export function SubmissionsPanel() {
         <>
           <div className="flex flex-wrap gap-3 text-[13px] text-[var(--text-secondary)]">
             <span className="px-3 py-1.5 rounded-full bg-[var(--bg-glass)] border border-[var(--border-subtle)]">
-              Tổng lượt: <b className="text-[var(--text-primary)]">{rows.length}</b>
+              Tổng lượt:{' '}
+              <b className="text-[var(--text-primary)]">{rows.length}</b>
             </span>
             <span className="px-3 py-1.5 rounded-full bg-[var(--bg-glass)] border border-[var(--border-subtle)]">
-              Đã nộp: <b className="text-[var(--text-primary)]">{submitted.length}</b>
+              Đã nộp:{' '}
+              <b className="text-[var(--text-primary)]">{submitted.length}</b>
             </span>
             <span className="px-3 py-1.5 rounded-full bg-[var(--bg-glass)] border border-[var(--border-subtle)]">
-              Điểm TB (đã nộp): <b className="text-[var(--text-primary)]">{avg.toFixed(2)}</b>
+              Điểm TB (đã nộp):{' '}
+              <b className="text-[var(--text-primary)]">{avg.toFixed(2)}</b>
             </span>
           </div>
 
@@ -220,11 +245,17 @@ export function SubmissionsPanel() {
                         className="hover:bg-[var(--bg-glass-light)] transition-colors"
                       >
                         <td className="p-3 pl-5">
-                          <p className="font-semibold text-[var(--text-primary)]">{r.studentName}</p>
-                          <p className="text-[12px] text-[var(--text-muted)]">{r.studentCode}</p>
+                          <p className="font-semibold text-[var(--text-primary)]">
+                            {r.studentName}
+                          </p>
+                          <p className="text-[12px] text-[var(--text-muted)]">
+                            {r.studentCode}
+                          </p>
                         </td>
                         <td className="p-3">
-                          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${st.cls}`}>
+                          <span
+                            className={`px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${st.cls}`}
+                          >
                             {st.label}
                           </span>
                         </td>
@@ -233,7 +264,9 @@ export function SubmissionsPanel() {
                         </td>
                         <td className="p-3 text-center">
                           {graded ? (
-                            <span className="font-bold text-[var(--text-primary)]">{r.score!.toFixed(2)}</span>
+                            <span className="font-bold text-[var(--text-primary)]">
+                              {r.score!.toFixed(2)}
+                            </span>
                           ) : (
                             <span className="text-[var(--text-muted)]">—</span>
                           )}
@@ -243,7 +276,9 @@ export function SubmissionsPanel() {
                             </span>
                           )}
                         </td>
-                        <td className="p-3 text-[var(--text-secondary)]">{fmtTime(r.submittedAt)}</td>
+                        <td className="p-3 text-[var(--text-secondary)]">
+                          {fmtTime(r.submittedAt)}
+                        </td>
                         <td className="p-3 pr-5 text-right">
                           {graded ? (
                             <Link
@@ -253,7 +288,9 @@ export function SubmissionsPanel() {
                               <Eye className="w-3.5 h-3.5" /> Xem bài
                             </Link>
                           ) : (
-                            <span className="text-[12px] text-[var(--text-muted)]">chưa nộp</span>
+                            <span className="text-[12px] text-[var(--text-muted)]">
+                              chưa nộp
+                            </span>
                           )}
                         </td>
                       </tr>

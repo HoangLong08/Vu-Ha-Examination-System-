@@ -23,8 +23,12 @@ export function StudentLayout({ children }: { children: ReactNode }) {
         <div className="flex items-center gap-3">
           <BrandLogo size={40} bare />
           <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)] leading-none mb-1">DAU Exam</h1>
-            <p className="text-[11px] text-[var(--text-secondary)] font-medium tracking-wide uppercase">Hệ thống trắc nghiệm</p>
+            <h1 className="text-xl font-bold text-[var(--text-primary)] leading-none mb-1">
+              DAU Exam
+            </h1>
+            <p className="text-[11px] text-[var(--text-secondary)] font-medium tracking-wide uppercase">
+              Hệ thống trắc nghiệm
+            </p>
           </div>
         </div>
 
@@ -38,12 +42,20 @@ export function StudentLayout({ children }: { children: ReactNode }) {
               className="flex items-center gap-3 rounded-xl pl-2.5 pr-2 py-1.5 hover:bg-[var(--bg-glass-light)] transition-colors"
             >
               <div className="text-right hidden sm:block">
-                <p className="text-[13px] font-bold text-[var(--text-primary)] leading-tight">{user?.lastName} {user?.firstName}</p>
-                <p className="text-[11px] text-[var(--text-secondary)]">{user?.studentInfo?.classId || 'Sinh viên'}</p>
+                <p className="text-[13px] font-bold text-[var(--text-primary)] leading-tight">
+                  {user?.lastName} {user?.firstName}
+                </p>
+                <p className="text-[11px] text-[var(--text-secondary)]">
+                  {user?.studentInfo?.classId || 'Sinh viên'}
+                </p>
               </div>
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-white font-bold text-base shadow-sm">
                 {user?.avatar ? (
-                  <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover rounded-xl" />
+                  <img
+                    src={user.avatar}
+                    alt="Avatar"
+                    className="w-full h-full object-cover rounded-xl"
+                  />
                 ) : (
                   user?.firstName?.charAt(0) || 'U'
                 )}

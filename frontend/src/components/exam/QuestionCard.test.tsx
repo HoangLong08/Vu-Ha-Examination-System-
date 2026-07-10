@@ -25,7 +25,9 @@ const baseOptions = [
   { key: 'D', value: 'Đáp án D' },
 ];
 
-function renderCard(overrides: Partial<React.ComponentProps<typeof QuestionCard>> = {}) {
+function renderCard(
+  overrides: Partial<React.ComponentProps<typeof QuestionCard>> = {},
+) {
   const onSelectAnswer = vi.fn();
   const props = {
     questionNumber: 1,
@@ -93,9 +95,15 @@ describe('QuestionCard - MULTIPLE_CHOICE', () => {
     const optionC = screen.getByText('Đáp án C').closest('button')!;
 
     // Selected options carry the selected-border class; unselected do not.
-    expect(optionA.className).toContain('border-[var(--option-border-selected)]');
-    expect(optionC.className).toContain('border-[var(--option-border-selected)]');
-    expect(optionB.className).not.toContain('border-[var(--option-border-selected)]');
+    expect(optionA.className).toContain(
+      'border-[var(--option-border-selected)]',
+    );
+    expect(optionC.className).toContain(
+      'border-[var(--option-border-selected)]',
+    );
+    expect(optionB.className).not.toContain(
+      'border-[var(--option-border-selected)]',
+    );
   });
 
   it('reports each clicked key independently so the parent can toggle multi-select', async () => {
@@ -147,8 +155,12 @@ describe('QuestionCard - selected answer highlighting', () => {
     const optionA = screen.getByText('Đáp án A').closest('button')!;
     const optionB = screen.getByText('Đáp án B').closest('button')!;
 
-    expect(optionB.className).toContain('border-[var(--option-border-selected)]');
-    expect(optionA.className).not.toContain('border-[var(--option-border-selected)]');
+    expect(optionB.className).toContain(
+      'border-[var(--option-border-selected)]',
+    );
+    expect(optionA.className).not.toContain(
+      'border-[var(--option-border-selected)]',
+    );
   });
 });
 
@@ -370,7 +382,9 @@ describe('QuestionCard - HOTSPOT (chọn vùng ảnh)', () => {
     });
     // 2 dấu: "Điểm đã chọn 1" và "2".
     const marker1 = screen.getByRole('button', { name: 'Điểm đã chọn 1' });
-    expect(screen.getByRole('button', { name: 'Điểm đã chọn 2' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Điểm đã chọn 2' }),
+    ).toBeInTheDocument();
     fireEvent.click(marker1); // xoá điểm 1 -> còn lại điểm 2
     expect(onTextAnswer).toHaveBeenCalledWith('0.6,0.7');
   });
@@ -445,10 +459,8 @@ describe('QuestionCard - single-selection semantics', () => {
     renderCard({ type: 'SINGLE_CHOICE', selectedAnswers: ['A', 'B', 'C'] });
 
     const selected = document
-      .querySelectorAll('button')
-      [0]?.parentElement?.querySelectorAll(
-        'button[aria-checked="true"]',
-      );
+      .querySelectorAll('button')[0]
+      ?.parentElement?.querySelectorAll('button[aria-checked="true"]');
     expect(selected?.length).toBe(1);
   });
 

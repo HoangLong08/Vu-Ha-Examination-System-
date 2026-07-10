@@ -52,12 +52,20 @@ export function Header(_props: HeaderProps) {
         <div className="group relative ml-2">
           <button className="flex items-center gap-2.5 glass-btn p-1.5 pl-4 rounded-full hover:bg-[var(--bg-glass-light)] transition-all cursor-pointer border border-[var(--border-subtle)]">
             <div className="flex-col items-end hidden sm:flex text-right">
-              <span className="text-[13px] font-bold text-[var(--text-primary)] leading-tight">{user?.lastName} {user?.firstName}</span>
-              <span className="text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-wider mt-0.5">{roleLabel}</span>
+              <span className="text-[13px] font-bold text-[var(--text-primary)] leading-tight">
+                {user?.lastName} {user?.firstName}
+              </span>
+              <span className="text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-wider mt-0.5">
+                {roleLabel}
+              </span>
             </div>
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-white font-bold text-sm overflow-hidden shadow-sm shrink-0">
               {user?.avatar ? (
-                <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                <img
+                  src={user.avatar}
+                  alt="Avatar"
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 user?.firstName?.charAt(0) || 'U'
               )}
@@ -69,8 +77,12 @@ export function Header(_props: HeaderProps) {
           <div className="absolute right-0 top-full pt-3 w-64 opacity-0 invisible translate-y-1 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 transition-all duration-200 z-50">
             <div className="bg-[var(--bg-glass-heavy)] backdrop-blur-xl border border-[var(--border-glass)] rounded-[16px] shadow-[0_16px_40px_rgba(0,0,0,0.15)] overflow-hidden">
               <div className="p-5 border-b border-[var(--border-subtle)] bg-[var(--bg-glass-light)] flex flex-col gap-1.5">
-                <p className="text-[15px] font-bold text-[var(--text-primary)] truncate">{user?.lastName} {user?.firstName}</p>
-                <p className="text-[13px] text-[var(--text-secondary)] truncate">{user?.email}</p>
+                <p className="text-[15px] font-bold text-[var(--text-primary)] truncate">
+                  {user?.lastName} {user?.firstName}
+                </p>
+                <p className="text-[13px] text-[var(--text-secondary)] truncate">
+                  {user?.email}
+                </p>
                 <div className="mt-1 flex">
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">
                     {roleLabel}

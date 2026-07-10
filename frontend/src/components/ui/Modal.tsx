@@ -11,7 +11,13 @@ interface ModalProps {
   className?: string;
 }
 
-export function Modal({ isOpen, onClose, title, children, className = '' }: ModalProps) {
+export function Modal({
+  isOpen,
+  onClose,
+  title,
+  children,
+  className = '',
+}: ModalProps) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -46,7 +52,9 @@ export function Modal({ isOpen, onClose, title, children, className = '' }: Moda
       >
         {title && (
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-[var(--text-primary)]">{title}</h3>
+            <h3 className="text-lg font-bold text-[var(--text-primary)]">
+              {title}
+            </h3>
             <button
               onClick={onClose}
               className="glass-btn p-2 rounded-lg hover:scale-105 active:scale-95 cursor-pointer"

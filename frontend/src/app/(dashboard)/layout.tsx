@@ -10,9 +10,7 @@ export default function DashboardGroupLayout({
 }) {
   return (
     <ProtectedRoute allowedRoles={['STUDENT']}>
-      <StudentLayout>
-        {children}
-      </StudentLayout>
+      <StudentLayout>{children}</StudentLayout>
     </ProtectedRoute>
   );
 }

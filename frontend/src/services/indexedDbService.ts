@@ -20,7 +20,10 @@ class ExamDatabase extends Dexie {
 
 export const localDb = new ExamDatabase();
 
-export const saveAnswerLocally = async (questionId: string, answerValue: string[]) => {
+export const saveAnswerLocally = async (
+  questionId: string,
+  answerValue: string[],
+) => {
   await localDb.answers.put({
     questionId,
     answerValue,

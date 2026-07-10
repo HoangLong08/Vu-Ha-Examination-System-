@@ -43,12 +43,15 @@ beforeEach(() => {
     examCoreMatrixId: null,
   });
   setExamConfig.mockImplementation(
-    async (_id: string, config: { showResult?: boolean; examCoreMatrixId?: string }) => ({
+    async (
+      _id: string,
+      config: { showResult?: boolean; examCoreMatrixId?: string },
+    ) => ({
       id: DEMO_ID,
       title: 'CS101',
       showResult: config.showResult ?? false,
       examCoreMatrixId: config.examCoreMatrixId ?? null,
-    })
+    }),
   );
   publishResults.mockResolvedValue({ published: 12 });
   getExamCoreMatrices.mockResolvedValue({
@@ -71,9 +74,11 @@ beforeEach(() => {
 describe('Admin — ExamConfigCard (FR-L-003)', () => {
   it('tải showResult hiện tại on mount', async () => {
     render(<AdminPage />);
-    await waitFor(() => expect(getExamDefinition).toHaveBeenCalledWith(DEMO_ID));
+    await waitFor(() =>
+      expect(getExamDefinition).toHaveBeenCalledWith(DEMO_ID),
+    );
     expect(
-      await screen.findByText(/Cấu hình kỳ thi — CS101/i)
+      await screen.findByText(/Cấu hình kỳ thi — CS101/i),
     ).toBeInTheDocument();
   });
 
@@ -89,10 +94,13 @@ describe('Admin — ExamConfigCard (FR-L-003)', () => {
     await user.click(toggle);
 
     await waitFor(() =>
-      expect(setExamConfig).toHaveBeenCalledWith(DEMO_ID, { showResult: true })
+      expect(setExamConfig).toHaveBeenCalledWith(DEMO_ID, { showResult: true }),
     );
     await waitFor(() =>
-      expect(screen.getByRole('switch')).toHaveAttribute('aria-checked', 'true')
+      expect(screen.getByRole('switch')).toHaveAttribute(
+        'aria-checked',
+        'true',
+      ),
     );
     expect(screen.getByText(/Đã lưu cấu hình/i)).toBeInTheDocument();
   });
@@ -109,7 +117,7 @@ describe('Admin — ExamConfigCard (FR-L-003)', () => {
     await waitFor(() =>
       expect(setExamConfig).toHaveBeenCalledWith(DEMO_ID, {
         examCoreMatrixId: 'mx00002-aaaa-4bbb-cccc-ddddeeee0002',
-      })
+      }),
     );
     expect(await screen.findByText(/Đã gắn ma trận đề/i)).toBeInTheDocument();
   });
@@ -124,14 +132,16 @@ describe('Admin — ExamConfigCard (FR-L-003)', () => {
     await user.click(publishBtn);
 
     await waitFor(() => expect(publishResults).toHaveBeenCalledWith(DEMO_ID));
-    expect(await screen.findByText(/Đã công bố 12 kết quả/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Đã công bố 12 kết quả/i),
+    ).toBeInTheDocument();
   });
 
   it('hiển thị lỗi khi tải cấu hình thất bại', async () => {
     getExamDefinition.mockRejectedValue(new Error('boom'));
     render(<AdminPage />);
     expect(
-      await screen.findByText(/Không tải được cấu hình kỳ thi/i)
+      await screen.findByText(/Không tải được cấu hình kỳ thi/i),
     ).toBeInTheDocument();
   });
 
@@ -144,7 +154,7 @@ describe('Admin — ExamConfigCard (FR-L-003)', () => {
     });
     await user.click(publishBtn);
     expect(
-      await screen.findByText(/Công bố kết quả thất bại/i)
+      await screen.findByText(/Công bố kết quả thất bại/i),
     ).toBeInTheDocument();
   });
 });

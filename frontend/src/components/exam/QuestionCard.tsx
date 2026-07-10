@@ -1,7 +1,19 @@
 'use client';
 
 import type { MouseEvent } from 'react';
-import { CircleDot, CheckSquare, ToggleLeft, Check, PenLine, Hash, FileText, ArrowRightLeft, ListOrdered, FolderTree, MousePointerClick } from 'lucide-react';
+import {
+  CircleDot,
+  CheckSquare,
+  ToggleLeft,
+  Check,
+  PenLine,
+  Hash,
+  FileText,
+  ArrowRightLeft,
+  ListOrdered,
+  FolderTree,
+  MousePointerClick,
+} from 'lucide-react';
 import { RichText } from '@/components/ui/RichText';
 
 interface Option {
@@ -50,22 +62,26 @@ const typeConfig = {
   SINGLE_CHOICE: {
     label: 'Một đáp án',
     icon: CircleDot,
-    badge: 'bg-[rgba(59,130,246,0.1)] text-brand-600 dark:bg-[rgba(59,130,246,0.15)] dark:text-blue-400',
+    badge:
+      'bg-[rgba(59,130,246,0.1)] text-brand-600 dark:bg-[rgba(59,130,246,0.15)] dark:text-blue-400',
   },
   MULTIPLE_CHOICE: {
     label: 'Nhiều đáp án',
     icon: CheckSquare,
-    badge: 'bg-[rgba(5,150,105,0.1)] text-[var(--color-accent)] dark:bg-[rgba(5,150,105,0.15)]',
+    badge:
+      'bg-[rgba(5,150,105,0.1)] text-[var(--color-accent)] dark:bg-[rgba(5,150,105,0.15)]',
   },
   TRUE_FALSE: {
     label: 'Đúng / Sai',
     icon: ToggleLeft,
-    badge: 'bg-[rgba(217,119,6,0.1)] text-[var(--color-warning)] dark:bg-[rgba(217,119,6,0.15)]',
+    badge:
+      'bg-[rgba(217,119,6,0.1)] text-[var(--color-warning)] dark:bg-[rgba(217,119,6,0.15)]',
   },
   FILL_BLANK: {
     label: 'Điền khuyết',
     icon: PenLine,
-    badge: 'bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300',
+    badge:
+      'bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300',
   },
   NUMERIC: {
     label: 'Điền giá trị',
@@ -75,12 +91,14 @@ const typeConfig = {
   ESSAY: {
     label: 'Tự luận',
     icon: FileText,
-    badge: 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
+    badge:
+      'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
   },
   MATCHING: {
     label: 'Đối sánh',
     icon: ArrowRightLeft,
-    badge: 'bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300',
+    badge:
+      'bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300',
   },
   ORDERING: {
     label: 'Sắp thứ tự',
@@ -90,7 +108,8 @@ const typeConfig = {
   CLASSIFY: {
     label: 'Phân loại',
     icon: FolderTree,
-    badge: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300',
+    badge:
+      'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300',
   },
   HOTSPOT: {
     label: 'Chọn vùng ảnh',
@@ -154,9 +173,7 @@ export function QuestionCard({
     const m = new Map(assignMap);
     if (targetKey) m.set(itemKey, targetKey);
     else m.delete(itemKey);
-    onTextAnswer?.(
-      [...m].map(([k, v]) => `${k}:${v}`).join(','),
-    );
+    onTextAnswer?.([...m].map(([k, v]) => `${k}:${v}`).join(','));
   };
   // For single-selection questions, only the first key in selectedAnswers is
   // honored so the UI can never display two simultaneously "selected" radios.
@@ -207,13 +224,15 @@ export function QuestionCard({
           Trình duyệt của bạn không hỗ trợ phát âm thanh.
         </audio>
       )}
-      {mediaUrl && !isHotspot && (mediaType == null || mediaType === 'IMAGE') && (
-        <img
-          src={mediaUrl}
-          alt="Hình ảnh câu hỏi"
-          className="max-w-full h-auto rounded-[14px] mb-7 border border-[var(--border-subtle)]"
-        />
-      )}
+      {mediaUrl &&
+        !isHotspot &&
+        (mediaType == null || mediaType === 'IMAGE') && (
+          <img
+            src={mediaUrl}
+            alt="Hình ảnh câu hỏi"
+            className="max-w-full h-auto rounded-[14px] mb-7 border border-[var(--border-subtle)]"
+          />
+        )}
 
       {/* Ô nhập bài viết (tự luận) */}
       {isEssay ? (
@@ -227,7 +246,8 @@ export function QuestionCard({
             className="w-full px-4 py-3 rounded-[14px] bg-[var(--bg-glass)] border-[1.5px] border-[var(--border-subtle)] text-[15px] leading-relaxed text-[var(--text-primary)] focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 transition-colors resize-y"
           />
           <p className="text-[12px] text-[var(--text-secondary)]">
-            Câu tự luận sẽ được <strong>giảng viên/khảo thí chấm tay</strong> sau khi nộp.
+            Câu tự luận sẽ được <strong>giảng viên/khảo thí chấm tay</strong>{' '}
+            sau khi nộp.
           </p>
         </div>
       ) : isText ? (
@@ -247,7 +267,8 @@ export function QuestionCard({
           <div className="flex items-center justify-between">
             <p className="text-[13px] text-[var(--text-secondary)]">
               Click vào ảnh để <strong>chỉ vị trí</strong> — đã chọn{' '}
-              <strong>{hotspotPoints.length}</strong> điểm. Click lại dấu để xoá.
+              <strong>{hotspotPoints.length}</strong> điểm. Click lại dấu để
+              xoá.
             </p>
             {hotspotPoints.length > 0 && (
               <button
@@ -322,25 +343,25 @@ export function QuestionCard({
           className="flex flex-col gap-2.5"
           role={isSingle ? 'radiogroup' : 'group'}
         >
-        {options.map((option) => {
-          const isSelected = effectiveSelected.includes(option.key);
-          return (
-            <button
-              key={option.key}
-              type="button"
-              aria-checked={isSelected}
-              data-selection-mode={isSingle ? 'single' : 'multiple'}
-              onClick={() => onSelectAnswer(option.key)}
-              className={`flex items-start gap-3.5 px-[18px] py-4 rounded-[14px] cursor-pointer select-none transition-all duration-200 text-left
+          {options.map((option) => {
+            const isSelected = effectiveSelected.includes(option.key);
+            return (
+              <button
+                key={option.key}
+                type="button"
+                aria-checked={isSelected}
+                data-selection-mode={isSingle ? 'single' : 'multiple'}
+                onClick={() => onSelectAnswer(option.key)}
+                className={`flex items-start gap-3.5 px-[18px] py-4 rounded-[14px] cursor-pointer select-none transition-all duration-200 text-left
                 ${
                   isSelected
                     ? 'bg-[var(--option-selected)] border-[1.5px] border-[var(--option-border-selected)] shadow-[0_0_0_3px_rgba(37,99,235,0.08)]'
                     : 'bg-[var(--bg-glass)] border-[1.5px] border-[var(--border-subtle)] hover:bg-[var(--option-hover)] hover:border-[rgba(37,99,235,0.2)] hover:translate-x-1'
                 }`}
-            >
-              {/* Radio / Checkbox Indicator */}
-              <div
-                className={`w-[22px] h-[22px] flex-shrink-0 mt-0.5 flex items-center justify-center transition-all duration-200
+              >
+                {/* Radio / Checkbox Indicator */}
+                <div
+                  className={`w-[22px] h-[22px] flex-shrink-0 mt-0.5 flex items-center justify-center transition-all duration-200
                   ${
                     isSingle
                       ? `rounded-full border-2 ${
@@ -354,24 +375,27 @@ export function QuestionCard({
                             : 'border-[var(--border-subtle)]'
                         }`
                   }`}
-              >
-                {isSelected &&
-                  (isSingle ? (
-                    <div className="w-2 h-2 bg-white rounded-full" />
-                  ) : (
-                    <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
-                  ))}
-              </div>
-              <span className="font-bold text-sm text-[var(--text-secondary)] min-w-[12px]">
-                {option.key}.
-              </span>
-              <RichText
-                text={option.value}
-                className="text-[15px] leading-relaxed text-[var(--text-primary)]"
-              />
-            </button>
-          );
-        })}
+                >
+                  {isSelected &&
+                    (isSingle ? (
+                      <div className="w-2 h-2 bg-white rounded-full" />
+                    ) : (
+                      <Check
+                        className="w-3.5 h-3.5 text-white"
+                        strokeWidth={3}
+                      />
+                    ))}
+                </div>
+                <span className="font-bold text-sm text-[var(--text-secondary)] min-w-[12px]">
+                  {option.key}.
+                </span>
+                <RichText
+                  text={option.value}
+                  className="text-[15px] leading-relaxed text-[var(--text-primary)]"
+                />
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

@@ -14,7 +14,10 @@ import type { ReviewResponse } from '@/services/api';
  */
 
 const getAttemptReview = vi.fn<(id: string) => Promise<ReviewResponse>>();
-const getExamAttempt = vi.fn(async () => ({ id: 'attempt-1', status: 'SUBMITTED' }));
+const getExamAttempt = vi.fn(async () => ({
+  id: 'attempt-1',
+  status: 'SUBMITTED',
+}));
 
 vi.mock('@/services/api', () => ({
   getAttemptReview: (id: string) => getAttemptReview(id),
@@ -60,8 +63,8 @@ describe('ExamResultPage — showResult flag', () => {
 
     await waitFor(() =>
       expect(
-        screen.getByText(/Chúc mừng! Bạn đã hoàn thành bài thi/i)
-      ).toBeInTheDocument()
+        screen.getByText(/Chúc mừng! Bạn đã hoàn thành bài thi/i),
+      ).toBeInTheDocument(),
     );
     // số câu đã làm hiển thị, điểm/đáp án KHÔNG hiển thị
     expect(screen.getByText(/4\/5/)).toBeInTheDocument();
@@ -80,8 +83,8 @@ describe('ExamResultPage — showResult flag', () => {
 
     await waitFor(() =>
       expect(
-        screen.getByText(/Chúc mừng! Bạn đã hoàn thành bài thi/i)
-      ).toBeInTheDocument()
+        screen.getByText(/Chúc mừng! Bạn đã hoàn thành bài thi/i),
+      ).toBeInTheDocument(),
     );
     expect(screen.queryByText(/\/ 10/)).not.toBeInTheDocument();
   });
@@ -113,11 +116,11 @@ describe('ExamResultPage — showResult flag', () => {
     render(<ExamResultPage />);
 
     await waitFor(() =>
-      expect(screen.getByText(/Chi tiết kết quả/i)).toBeInTheDocument()
+      expect(screen.getByText(/Chi tiết kết quả/i)).toBeInTheDocument(),
     );
     expect(screen.getByText(/Đáp án đúng/i)).toBeInTheDocument();
     expect(
-      screen.queryByText(/Chúc mừng! Bạn đã hoàn thành bài thi/i)
+      screen.queryByText(/Chúc mừng! Bạn đã hoàn thành bài thi/i),
     ).not.toBeInTheDocument();
   });
 });

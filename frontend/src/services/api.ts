@@ -36,7 +36,7 @@ api.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 // ── US-005 / FR-P-001: Pre-exam device check ─────────────────────────────────
@@ -58,7 +58,7 @@ export interface DeviceCheckResult {
  */
 export async function checkDevice(
   examId: string,
-  payload: DeviceCheckPayload
+  payload: DeviceCheckPayload,
 ): Promise<DeviceCheckResult> {
   const res = await api.post(`/exams/${examId}/check-device`, payload);
   return res.data.data;
@@ -132,7 +132,9 @@ export async function startExam(examId: string): Promise<StartExamResult> {
  * Resolve the array flexibly so both shapes work. `correctAnswer` is hidden by
  * the backend; `mediaType` is absent (derive it from `mediaUrl` at the caller).
  */
-export async function getExamQuestions(examId: string): Promise<ExamQuestion[]> {
+export async function getExamQuestions(
+  examId: string,
+): Promise<ExamQuestion[]> {
   const res = await api.get(`/exams/${examId}/questions`);
   return Array.isArray(res.data?.data)
     ? res.data.data
@@ -140,7 +142,9 @@ export async function getExamQuestions(examId: string): Promise<ExamQuestion[]> 
 }
 
 /** GET /attempts/:attemptId/answers → server-of-truth answers for recovery. */
-export async function getAttemptAnswers(attemptId: string): Promise<AttemptAnswer[]> {
+export async function getAttemptAnswers(
+  attemptId: string,
+): Promise<AttemptAnswer[]> {
   const res = await api.get(`/attempts/${attemptId}/answers`);
   return res.data.data;
 }
@@ -150,12 +154,12 @@ export async function saveAnswer(
   attemptId: string,
   questionId: string,
   answer: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<unknown> {
   const res = await api.post(
     `/attempts/${attemptId}/answers`,
     { questionId, answer },
-    { signal }
+    { signal },
   );
   return res.data.data;
 }
@@ -164,12 +168,12 @@ export async function saveAnswer(
 export async function autosaveAnswers(
   attemptId: string,
   items: AutosaveItem[],
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<unknown> {
   const res = await api.post(
     `/attempts/${attemptId}/autosave`,
     { answers: items },
-    { signal }
+    { signal },
   );
   return res.data.data;
 }
@@ -267,7 +271,7 @@ export interface EssayAttempt {
 
 /** GET /exams/:id/essays → các bài tự luận cần chấm. */
 export async function getExamEssays(
-  examDefinitionId: string
+  examDefinitionId: string,
 ): Promise<EssayAttempt[]> {
   const res = await api.get(`/exams/${examDefinitionId}/essays`);
   return Array.isArray(res.data?.data) ? res.data.data : [];
@@ -290,7 +294,7 @@ export interface ExamAttemptRow {
 
 /** GET /exams/:id/attempts → danh sách bài làm của một đề. */
 export async function getExamAttempts(
-  examDefinitionId: string
+  examDefinitionId: string,
 ): Promise<ExamAttemptRow[]> {
   const res = await api.get(`/exams/${examDefinitionId}/attempts`);
   return Array.isArray(res.data?.data) ? res.data.data : [];
@@ -300,7 +304,7 @@ export async function getExamAttempts(
 export async function gradeEssay(
   attemptId: string,
   questionId: string,
-  credit: number
+  credit: number,
 ): Promise<{ manualCredit: number }> {
   const res = await api.post(`/attempts/${attemptId}/essay-grade`, {
     questionId,
@@ -384,7 +388,7 @@ export async function getInvigilatorSessions(): Promise<InvigSession[]> {
 
 /** GET /invigilator/sessions/:id/students → sinh viên thật trong một đề. */
 export async function getInvigilatorStudents(
-  sessionId: string
+  sessionId: string,
 ): Promise<InvigStudent[]> {
   const res = await api.get(`/invigilator/sessions/${sessionId}/students`);
   return Array.isArray(res.data?.data) ? res.data.data : [];
@@ -448,7 +452,7 @@ export async function getInvigilators(): Promise<Invigilator[]> {
 export async function assignInvigilator(
   sessionId: string,
   roomId: string,
-  invigilatorId: string
+  invigilatorId: string,
 ): Promise<{ id: string }> {
   const res = await api.post(`/scheduling/sessions/${sessionId}/assign`, {
     roomId,
@@ -464,10 +468,10 @@ export async function removeAssignment(id: string): Promise<{ ok: boolean }> {
 /** Giám thị cấp lại mật khẩu (mật khẩu mới = mã SV). */
 export async function resetStudentPassword(
   examId: string,
-  studentCode: string
+  studentCode: string,
 ): Promise<{ ok: boolean; newPassword: string; exists: boolean }> {
   const res = await api.post(
-    `/invigilator/sessions/${examId}/students/${encodeURIComponent(studentCode)}/reset-password`
+    `/invigilator/sessions/${examId}/students/${encodeURIComponent(studentCode)}/reset-password`,
   );
   return res.data.data;
 }
@@ -475,10 +479,10 @@ export async function resetStudentPassword(
 /** Giám thị đổi máy / khôi phục phiên (gỡ ràng buộc máy lượt đang làm). */
 export async function resetStudentSession(
   examId: string,
-  studentCode: string
+  studentCode: string,
 ): Promise<{ ok: boolean; cleared: boolean }> {
   const res = await api.post(
-    `/invigilator/sessions/${examId}/students/${encodeURIComponent(studentCode)}/reset-session`
+    `/invigilator/sessions/${examId}/students/${encodeURIComponent(studentCode)}/reset-session`,
   );
   return res.data.data;
 }
@@ -508,14 +512,16 @@ export interface ExamAttempt {
  * is no result yet. Both are surfaced to the caller as axios errors.
  */
 export async function getAttemptReview(
-  attemptId: string
+  attemptId: string,
 ): Promise<ReviewResponse> {
   const res = await api.get(`/attempts/${attemptId}/review`);
   return res.data.data;
 }
 
 /** GET /attempts/:attemptId/review → only the graded result block (null nếu ẩn điểm). */
-export async function getResult(attemptId: string): Promise<AttemptResult | null> {
+export async function getResult(
+  attemptId: string,
+): Promise<AttemptResult | null> {
   const res = await api.get(`/attempts/${attemptId}/review`);
   return res.data.data.result;
 }
@@ -524,7 +530,7 @@ export async function getResult(attemptId: string): Promise<AttemptResult | null
 
 /** GET /exam-definitions/:id → cấu hình đề (gồm cờ `showResult`). */
 export async function getExamDefinition(
-  id: string
+  id: string,
 ): Promise<ExamDefinitionConfig> {
   const res = await api.get(`/exam-definitions/${id}`);
   return res.data.data;
@@ -554,7 +560,7 @@ export async function createExamDefinition(payload: {
  */
 export async function setExamConfig(
   id: string,
-  config: ExamConfigPatch
+  config: ExamConfigPatch,
 ): Promise<ExamDefinitionConfig> {
   const res = await api.patch(`/exam-definitions/${id}/config`, config);
   return res.data.data;
@@ -574,7 +580,7 @@ export async function getExamCoreMatrices(): Promise<{
  * Trả về số kết quả đã công bố.
  */
 export async function publishResults(
-  examDefinitionId: string
+  examDefinitionId: string,
 ): Promise<{ published: number }> {
   const res = await api.post(`/exams/${examDefinitionId}/results/publish`);
   return res.data.data;
@@ -582,7 +588,7 @@ export async function publishResults(
 
 /** POST /exams/:examDefinitionId/results/unpublish → gỡ công bố kết quả. */
 export async function unpublishResults(
-  examDefinitionId: string
+  examDefinitionId: string,
 ): Promise<{ unpublished: number }> {
   const res = await api.post(`/exams/${examDefinitionId}/results/unpublish`);
   return res.data.data;
@@ -607,9 +613,11 @@ export interface AuthUser {
 }
 
 export async function devLogin(
-  email: string
+  email: string,
 ): Promise<{ user: AuthUser; accessToken: string }> {
-  const res = await axios.post(`${base}/api/auth/dev/yopmail-test-user`, { email });
+  const res = await axios.post(`${base}/api/auth/dev/yopmail-test-user`, {
+    email,
+  });
   const d = res.data.data;
   return { user: d.user, accessToken: d.token.accessToken };
 }
@@ -620,7 +628,7 @@ export async function devLogin(
  */
 export async function login(
   email: string,
-  password: string
+  password: string,
 ): Promise<{ user: AuthUser; accessToken: string }> {
   const res = await axios.post(`${base}/api/auth/login`, { email, password });
   const d = res.data.data;

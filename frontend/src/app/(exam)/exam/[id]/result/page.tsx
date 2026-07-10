@@ -6,9 +6,16 @@ import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 import { RichText } from '@/components/ui/RichText';
 import {
-  CheckCircle2, XCircle, MinusCircle,
-  ListChecks, Check, X, Minus,
-  Clock, AlertCircle, PartyPopper,
+  CheckCircle2,
+  XCircle,
+  MinusCircle,
+  ListChecks,
+  Check,
+  X,
+  Minus,
+  Clock,
+  AlertCircle,
+  PartyPopper,
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { BrandLogo } from '@/components/ui/BrandLogo';
@@ -92,7 +99,10 @@ export default function ExamResultPage() {
       if (status === 403) {
         setLoad({ phase: 'pending' });
       } else if (status === 404) {
-        setLoad({ phase: 'error', message: 'Chưa có kết quả cho bài thi này.' });
+        setLoad({
+          phase: 'error',
+          message: 'Chưa có kết quả cho bài thi này.',
+        });
       } else {
         console.error('Tải kết quả thất bại:', err);
         setLoad({
@@ -120,8 +130,12 @@ export default function ExamResultPage() {
       <div className="flex items-center gap-3.5">
         <BrandLogo size={38} bare />
         <div className="min-w-0">
-          <h2 className="text-[15px] font-bold text-[var(--text-primary)] leading-tight truncate">DAU Exam</h2>
-          <p className="text-[11px] text-[var(--text-secondary)] font-medium tracking-wide uppercase truncate">Hệ thống trắc nghiệm</p>
+          <h2 className="text-[15px] font-bold text-[var(--text-primary)] leading-tight truncate">
+            DAU Exam
+          </h2>
+          <p className="text-[11px] text-[var(--text-secondary)] font-medium tracking-wide uppercase truncate">
+            Hệ thống trắc nghiệm
+          </p>
         </div>
       </div>
       <div className="flex gap-2.5">
@@ -136,7 +150,9 @@ export default function ExamResultPage() {
       <div className="flex flex-col min-h-screen relative z-[1]">
         {header}
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-[var(--text-secondary)] font-medium">Đang tải kết quả…</p>
+          <p className="text-[var(--text-secondary)] font-medium">
+            Đang tải kết quả…
+          </p>
         </div>
       </div>
     );
@@ -159,7 +175,13 @@ export default function ExamResultPage() {
               Kết quả sẽ được công bố sau. Vui lòng quay lại sau khi giảng viên
               công bố điểm.
             </p>
-            <button type="button" onClick={handleClose} className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-[14px] text-[15px] font-bold text-white bg-gradient-to-br from-blue-600 to-blue-700 shadow-[0_4px_16px_rgba(37,99,235,0.3)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(37,99,235,0.4)] transition-all"><X className="w-5 h-5" /> Đóng</button>
+            <button
+              type="button"
+              onClick={handleClose}
+              className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-[14px] text-[15px] font-bold text-white bg-gradient-to-br from-blue-600 to-blue-700 shadow-[0_4px_16px_rgba(37,99,235,0.3)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(37,99,235,0.4)] transition-all"
+            >
+              <X className="w-5 h-5" /> Đóng
+            </button>
           </GlassCard>
         </div>
       </div>
@@ -189,7 +211,13 @@ export default function ExamResultPage() {
               >
                 Thử lại
               </button>
-              <button type="button" onClick={handleClose} className="inline-flex items-center justify-center gap-2.5 px-7 py-3 rounded-[14px] text-[15px] font-bold text-white bg-gradient-to-br from-blue-600 to-blue-700 shadow-[0_4px_16px_rgba(37,99,235,0.3)] hover:-translate-y-0.5 transition-all"><X className="w-5 h-5" /> Đóng</button>
+              <button
+                type="button"
+                onClick={handleClose}
+                className="inline-flex items-center justify-center gap-2.5 px-7 py-3 rounded-[14px] text-[15px] font-bold text-white bg-gradient-to-br from-blue-600 to-blue-700 shadow-[0_4px_16px_rgba(37,99,235,0.3)] hover:-translate-y-0.5 transition-all"
+              >
+                <X className="w-5 h-5" /> Đóng
+              </button>
             </div>
           </GlassCard>
         </div>
@@ -222,7 +250,13 @@ export default function ExamResultPage() {
               </span>{' '}
               câu. Đề thi này không hiển thị điểm chi tiết.
             </p>
-            <button type="button" onClick={handleClose} className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-[14px] text-[15px] font-bold text-white bg-gradient-to-br from-blue-600 to-blue-700 shadow-[0_4px_16px_rgba(37,99,235,0.3)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(37,99,235,0.4)] transition-all"><X className="w-5 h-5" /> Đóng</button>
+            <button
+              type="button"
+              onClick={handleClose}
+              className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-[14px] text-[15px] font-bold text-white bg-gradient-to-br from-blue-600 to-blue-700 shadow-[0_4px_16px_rgba(37,99,235,0.3)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(37,99,235,0.4)] transition-all"
+            >
+              <X className="w-5 h-5" /> Đóng
+            </button>
           </GlassCard>
         </div>
       </div>
@@ -238,7 +272,7 @@ export default function ExamResultPage() {
   const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
 
   const filteredReviews = review.filter(
-    (r) => filter === 'all' || r.status === filter
+    (r) => filter === 'all' || r.status === filter,
   );
 
   const filterDefs: { id: Filter; label: string; icon: typeof ListChecks }[] = [
@@ -278,9 +312,18 @@ export default function ExamResultPage() {
           <div className="flex flex-col md:flex-row items-center gap-12 mb-8">
             <div className="w-[180px] h-[180px] shrink-0 relative">
               <svg viewBox="0 0 180 180" className="-rotate-90 w-full h-full">
-                <circle cx="90" cy="90" r="80" fill="none" stroke="var(--border-subtle)" strokeWidth="8" />
                 <circle
-                  cx="90" cy="90" r="80"
+                  cx="90"
+                  cy="90"
+                  r="80"
+                  fill="none"
+                  stroke="var(--border-subtle)"
+                  strokeWidth="8"
+                />
+                <circle
+                  cx="90"
+                  cy="90"
+                  r="80"
                   fill="none"
                   stroke="url(#scoreGradient)"
                   strokeWidth="8"
@@ -294,7 +337,9 @@ export default function ExamResultPage() {
                 <div className="text-[42px] font-bold font-mono bg-gradient-to-br from-emerald-600 to-emerald-400 bg-clip-text text-transparent leading-none">
                   {score.toFixed(1)}
                 </div>
-                <div className="text-[16px] font-medium text-[var(--text-muted)] mt-0.5">/ 10</div>
+                <div className="text-[16px] font-medium text-[var(--text-muted)] mt-0.5">
+                  / 10
+                </div>
                 <div className="text-[13px] font-bold mt-1.5 px-3 py-1 rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-500">
                   {gradeLabel(result.score)}
                 </div>
@@ -302,35 +347,53 @@ export default function ExamResultPage() {
             </div>
 
             <div className="flex-1 w-full">
-              <h3 className="text-[20px] font-bold text-[var(--text-primary)] mb-5">Chi tiết kết quả</h3>
+              <h3 className="text-[20px] font-bold text-[var(--text-primary)] mb-5">
+                Chi tiết kết quả
+              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div className="bg-[var(--bg-glass)] border border-[var(--border-subtle)] rounded-[14px] p-4.5 transition-all hover:-translate-y-0.5 hover:shadow-lg">
                   <div className="w-[38px] h-[38px] rounded-[10px] flex items-center justify-center mb-2.5 bg-emerald-500/12 text-emerald-600">
                     <CheckCircle2 className="w-5 h-5" />
                   </div>
-                  <div className="text-[22px] font-bold text-[var(--text-primary)]">{correct}</div>
-                  <div className="text-[12px] font-medium text-[var(--text-secondary)] mt-0.5">Câu đúng</div>
+                  <div className="text-[22px] font-bold text-[var(--text-primary)]">
+                    {correct}
+                  </div>
+                  <div className="text-[12px] font-medium text-[var(--text-secondary)] mt-0.5">
+                    Câu đúng
+                  </div>
                 </div>
                 <div className="bg-[var(--bg-glass)] border border-[var(--border-subtle)] rounded-[14px] p-4.5 transition-all hover:-translate-y-0.5 hover:shadow-lg">
                   <div className="w-[38px] h-[38px] rounded-[10px] flex items-center justify-center mb-2.5 bg-rose-500/12 text-rose-600">
                     <XCircle className="w-5 h-5" />
                   </div>
-                  <div className="text-[22px] font-bold text-[var(--text-primary)]">{wrong}</div>
-                  <div className="text-[12px] font-medium text-[var(--text-secondary)] mt-0.5">Câu sai</div>
+                  <div className="text-[22px] font-bold text-[var(--text-primary)]">
+                    {wrong}
+                  </div>
+                  <div className="text-[12px] font-medium text-[var(--text-secondary)] mt-0.5">
+                    Câu sai
+                  </div>
                 </div>
                 <div className="bg-[var(--bg-glass)] border border-[var(--border-subtle)] rounded-[14px] p-4.5 transition-all hover:-translate-y-0.5 hover:shadow-lg">
                   <div className="w-[38px] h-[38px] rounded-[10px] flex items-center justify-center mb-2.5 bg-amber-500/12 text-amber-600">
                     <MinusCircle className="w-5 h-5" />
                   </div>
-                  <div className="text-[22px] font-bold text-[var(--text-primary)]">{skipped}</div>
-                  <div className="text-[12px] font-medium text-[var(--text-secondary)] mt-0.5">Bỏ qua</div>
+                  <div className="text-[22px] font-bold text-[var(--text-primary)]">
+                    {skipped}
+                  </div>
+                  <div className="text-[12px] font-medium text-[var(--text-secondary)] mt-0.5">
+                    Bỏ qua
+                  </div>
                 </div>
                 <div className="bg-[var(--bg-glass)] border border-[var(--border-subtle)] rounded-[14px] p-4.5 transition-all hover:-translate-y-0.5 hover:shadow-lg">
                   <div className="w-[38px] h-[38px] rounded-[10px] flex items-center justify-center mb-2.5 bg-blue-500/12 text-blue-600">
                     <ListChecks className="w-5 h-5" />
                   </div>
-                  <div className="text-[22px] font-bold text-[var(--text-primary)]">{total}</div>
-                  <div className="text-[12px] font-medium text-[var(--text-secondary)] mt-0.5">Tổng số câu</div>
+                  <div className="text-[22px] font-bold text-[var(--text-primary)]">
+                    {total}
+                  </div>
+                  <div className="text-[12px] font-medium text-[var(--text-secondary)] mt-0.5">
+                    Tổng số câu
+                  </div>
                 </div>
               </div>
             </div>
@@ -339,7 +402,9 @@ export default function ExamResultPage() {
           <div className="pt-7 border-t border-[var(--border-subtle)]">
             <div className="flex justify-between mb-2.5 text-[13px] font-semibold text-[var(--text-secondary)]">
               <span>Tỷ lệ chính xác</span>
-              <span>{correct}/{total} câu đúng ({percent}%)</span>
+              <span>
+                {correct}/{total} câu đúng ({percent}%)
+              </span>
             </div>
             <div className="h-2.5 rounded-full bg-[var(--bg-glass)] border border-[var(--border-subtle)] overflow-hidden">
               <div
@@ -362,9 +427,10 @@ export default function ExamResultPage() {
                 key={f.id}
                 onClick={() => setFilter(f.id)}
                 className={`px-4.5 py-2 rounded-[10px] text-[13px] font-semibold transition-all border inline-flex items-center gap-1.5
-                  ${filter === f.id
-                    ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white border-transparent'
-                    : 'bg-[var(--bg-glass)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-glass-heavy)] hover:text-[var(--text-primary)]'
+                  ${
+                    filter === f.id
+                      ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white border-transparent'
+                      : 'bg-[var(--bg-glass)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-glass-heavy)] hover:text-[var(--text-primary)]'
                   }
                 `}
               >
@@ -380,15 +446,24 @@ export default function ExamResultPage() {
               </GlassCard>
             )}
             {filteredReviews.map((r) => (
-              <GlassCard key={r.questionId} className="flex items-start gap-4 px-5 py-4.5 transition-all hover:translate-x-1">
-                <div className={`w-[42px] h-[42px] rounded-xl flex items-center justify-center shrink-0
+              <GlassCard
+                key={r.questionId}
+                className="flex items-start gap-4 px-5 py-4.5 transition-all hover:translate-x-1"
+              >
+                <div
+                  className={`w-[42px] h-[42px] rounded-xl flex items-center justify-center shrink-0
                   ${r.status === 'correct' ? 'bg-emerald-500/12 text-emerald-600' : ''}
                   ${r.status === 'wrong' ? 'bg-rose-500/12 text-rose-600' : ''}
                   ${r.status === 'skipped' ? 'bg-amber-500/12 text-amber-600' : ''}
-                `}>
-                  {r.status === 'correct' && <Check className="w-[22px] h-[22px]" />}
+                `}
+                >
+                  {r.status === 'correct' && (
+                    <Check className="w-[22px] h-[22px]" />
+                  )}
                   {r.status === 'wrong' && <X className="w-[22px] h-[22px]" />}
-                  {r.status === 'skipped' && <Minus className="w-[22px] h-[22px]" />}
+                  {r.status === 'skipped' && (
+                    <Minus className="w-[22px] h-[22px]" />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-[12px] font-semibold text-[var(--text-secondary)] mb-1">
@@ -401,25 +476,43 @@ export default function ExamResultPage() {
                   <div className="flex flex-col gap-1 text-[13px]">
                     <span className="text-[var(--text-secondary)]">
                       Bạn chọn:{' '}
-                      <span className={`font-semibold ${r.status === 'correct' ? 'text-emerald-600' : r.status === 'wrong' ? 'text-rose-600' : 'text-amber-600'}`}>
+                      <span
+                        className={`font-semibold ${r.status === 'correct' ? 'text-emerald-600' : r.status === 'wrong' ? 'text-rose-600' : 'text-amber-600'}`}
+                      >
                         {r.yourAnswer ?? '—'}
                       </span>
                     </span>
                     <span className="text-[var(--text-secondary)]">
                       Đáp án đúng:{' '}
-                      <span className="font-semibold text-emerald-600">{r.correctAnswer}</span>
+                      <span className="font-semibold text-emerald-600">
+                        {r.correctAnswer}
+                      </span>
                     </span>
                   </div>
                 </div>
                 <div className="shrink-0">
-                  <span className={`text-[11px] font-bold px-2.5 py-1 rounded-md inline-flex items-center gap-1
+                  <span
+                    className={`text-[11px] font-bold px-2.5 py-1 rounded-md inline-flex items-center gap-1
                     ${r.status === 'correct' ? 'bg-emerald-500/12 text-emerald-600' : ''}
                     ${r.status === 'wrong' ? 'bg-rose-500/12 text-rose-600' : ''}
                     ${r.status === 'skipped' ? 'bg-amber-500/12 text-amber-600' : ''}
-                  `}>
-                    {r.status === 'correct' && <><Check className="w-3 h-3" /> Đúng</>}
-                    {r.status === 'wrong' && <><X className="w-3 h-3" /> Sai</>}
-                    {r.status === 'skipped' && <><Minus className="w-3 h-3" /> Bỏ qua</>}
+                  `}
+                  >
+                    {r.status === 'correct' && (
+                      <>
+                        <Check className="w-3 h-3" /> Đúng
+                      </>
+                    )}
+                    {r.status === 'wrong' && (
+                      <>
+                        <X className="w-3 h-3" /> Sai
+                      </>
+                    )}
+                    {r.status === 'skipped' && (
+                      <>
+                        <Minus className="w-3 h-3" /> Bỏ qua
+                      </>
+                    )}
                   </span>
                 </div>
               </GlassCard>
@@ -428,7 +521,13 @@ export default function ExamResultPage() {
         </div>
 
         <div className="flex flex-col sm:flex-row justify-center gap-3.5 mt-9">
-          <button type="button" onClick={handleClose} className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-[14px] text-[15px] font-bold text-white bg-gradient-to-br from-blue-600 to-blue-700 shadow-[0_4px_16px_rgba(37,99,235,0.3)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(37,99,235,0.4)] transition-all"><X className="w-5 h-5" /> Đóng</button>
+          <button
+            type="button"
+            onClick={handleClose}
+            className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-[14px] text-[15px] font-bold text-white bg-gradient-to-br from-blue-600 to-blue-700 shadow-[0_4px_16px_rgba(37,99,235,0.3)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(37,99,235,0.4)] transition-all"
+          >
+            <X className="w-5 h-5" /> Đóng
+          </button>
         </div>
       </div>
     </div>

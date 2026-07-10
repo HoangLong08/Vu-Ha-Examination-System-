@@ -23,7 +23,7 @@ export const useExamSecurity = (attemptId: string, isExamActive: boolean) => {
         timestamp: new Date().toISOString(),
       });
     },
-    [attemptId]
+    [attemptId],
   );
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export const useExamSecurity = (attemptId: string, isExamActive: boolean) => {
     const handleWindowBlur = () => {
       logViolation(
         'WINDOW_BLUR',
-        'Sinh viên thoát chế độ toàn màn hình hoặc bấm ra ngoài cửa sổ thi'
+        'Sinh viên thoát chế độ toàn màn hình hoặc bấm ra ngoài cửa sổ thi',
       );
     };
 

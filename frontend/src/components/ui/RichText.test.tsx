@@ -4,7 +4,9 @@ import { RichText } from './RichText';
 
 describe('RichText', () => {
   it('giữ định dạng HTML (B/I/U)', () => {
-    const { container } = render(<RichText text="Xin <b>chào</b> <i>bạn</i>" />);
+    const { container } = render(
+      <RichText text="Xin <b>chào</b> <i>bạn</i>" />,
+    );
     expect(container.querySelector('b')?.textContent).toBe('chào');
     expect(container.querySelector('i')?.textContent).toBe('bạn');
   });
@@ -27,7 +29,7 @@ describe('RichText', () => {
 
   it('loại bỏ script độc hại (sanitize)', () => {
     const { container } = render(
-      <RichText text={'ok<script>alert(1)</script>'} />
+      <RichText text={'ok<script>alert(1)</script>'} />,
     );
     expect(container.querySelector('script')).toBeNull();
   });

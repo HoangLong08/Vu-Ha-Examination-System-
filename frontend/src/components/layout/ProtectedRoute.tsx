@@ -12,11 +12,15 @@ interface ProtectedRouteProps {
 /** Trang chủ ĐÚNG theo vai trò (tránh đẩy nhầm về '/' gây lặp vô hạn). */
 function roleHome(roles: string[]): string {
   if (roles.includes('INVIGILATOR')) return '/invigilator';
-  if (roles.includes('EXAM_OFFICER') || roles.includes('ADMIN')) return '/admin';
+  if (roles.includes('EXAM_OFFICER') || roles.includes('ADMIN'))
+    return '/admin';
   return '/';
 }
 
-export default function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
+export default function ProtectedRoute({
+  children,
+  allowedRoles,
+}: ProtectedRouteProps) {
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 

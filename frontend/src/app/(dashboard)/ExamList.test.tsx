@@ -42,7 +42,7 @@ describe('ExamList (dashboard sinh viên)', () => {
     render(<ExamList />);
 
     expect(
-      await screen.findByText(/Lịch sử Đảng — Thi cuối kỳ/i)
+      await screen.findByText(/Lịch sử Đảng — Thi cuối kỳ/i),
     ).toBeInTheDocument();
     expect(screen.getByText(/Tiếng Anh cơ bản/i)).toBeInTheDocument();
     expect(screen.getByText(/10 câu/i)).toBeInTheDocument();
@@ -51,16 +51,14 @@ describe('ExamList (dashboard sinh viên)', () => {
     expect(links).toHaveLength(2);
     expect(links[0]).toHaveAttribute(
       'href',
-      '/exam/22222222-2222-4222-8222-222222222222'
+      '/exam/22222222-2222-4222-8222-222222222222',
     );
   });
 
   it('danh sách rỗng => báo chưa có đề', async () => {
     getExamDefinitions.mockResolvedValue([]);
     render(<ExamList />);
-    expect(
-      await screen.findByText(/chưa có đề thi nào/i)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/chưa có đề thi nào/i)).toBeInTheDocument();
   });
 
   it('lỗi API => báo lỗi', async () => {
@@ -68,8 +66,8 @@ describe('ExamList (dashboard sinh viên)', () => {
     render(<ExamList />);
     await waitFor(() =>
       expect(
-        screen.getByText(/Không tải được danh sách đề thi/i)
-      ).toBeInTheDocument()
+        screen.getByText(/Không tải được danh sách đề thi/i),
+      ).toBeInTheDocument(),
     );
   });
 });

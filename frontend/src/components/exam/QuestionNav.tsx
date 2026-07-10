@@ -31,7 +31,6 @@ export function QuestionNav({
 
   return (
     <aside className="w-[320px] h-[calc(100vh-72px)] sticky top-[72px] right-0 bg-[var(--bg-glass)] backdrop-blur-[24px] border-l border-[var(--border-glass)] flex flex-col">
-      
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto p-6 flex flex-col">
         {/* Question Grid */}
@@ -45,16 +44,21 @@ export function QuestionNav({
             const isAnswered = answeredQuestions.has(i);
             const isFlagged = flaggedQuestions.has(i);
 
-            let cellClass = 'bg-[var(--bg-glass)] border-[1.5px] border-[var(--border-subtle)] text-[var(--text-secondary)]';
-          
+            let cellClass =
+              'bg-[var(--bg-glass)] border-[1.5px] border-[var(--border-subtle)] text-[var(--text-secondary)]';
+
             if (isCurrent && isFlagged) {
-              cellClass = 'bg-[rgba(217,119,6,0.12)] text-[var(--color-warning)] border-[var(--color-warning)] scale-110 shadow-[0_2px_12px_rgba(217,119,6,0.3)] font-bold';
+              cellClass =
+                'bg-[rgba(217,119,6,0.12)] text-[var(--color-warning)] border-[var(--color-warning)] scale-110 shadow-[0_2px_12px_rgba(217,119,6,0.3)] font-bold';
             } else if (isCurrent) {
-              cellClass = 'bg-gradient-to-br from-brand-600 to-brand-700 text-white border-2 border-brand-400 dark:border-blue-400 shadow-[0_2px_12px_rgba(37,99,235,0.3)] scale-110 font-bold';
+              cellClass =
+                'bg-gradient-to-br from-brand-600 to-brand-700 text-white border-2 border-brand-400 dark:border-blue-400 shadow-[0_2px_12px_rgba(37,99,235,0.3)] scale-110 font-bold';
             } else if (isFlagged) {
-              cellClass = 'bg-[rgba(217,119,6,0.12)] text-[var(--color-warning)] border-[rgba(217,119,6,0.3)]';
+              cellClass =
+                'bg-[rgba(217,119,6,0.12)] text-[var(--color-warning)] border-[rgba(217,119,6,0.3)]';
             } else if (isAnswered) {
-              cellClass = 'bg-[rgba(5,150,105,0.12)] text-[var(--color-accent)] border-[rgba(5,150,105,0.3)]';
+              cellClass =
+                'bg-[rgba(5,150,105,0.12)] text-[var(--color-accent)] border-[rgba(5,150,105,0.3)]';
             }
 
             return (
@@ -73,17 +77,29 @@ export function QuestionNav({
         </div>
 
         {/* Legend */}
-      <div className="flex items-center gap-2 text-[13px] font-bold text-[var(--text-primary)] mb-3.5">
-        <Info className="w-4 h-4 text-brand-600 dark:text-blue-400" />
-        Chú thích
+        <div className="flex items-center gap-2 text-[13px] font-bold text-[var(--text-primary)] mb-3.5">
+          <Info className="w-4 h-4 text-brand-600 dark:text-blue-400" />
+          Chú thích
+        </div>
+        <div className="bg-[var(--bg-glass-heavy)] border border-[var(--border-subtle)] rounded-xl p-4 grid grid-cols-2 gap-x-3 gap-y-2.5">
+          <LegendItem
+            color="bg-[var(--bg-glass)] border border-[var(--border-subtle)]"
+            label="Chưa làm"
+          />
+          <LegendItem
+            color="bg-gradient-to-br from-brand-600 to-brand-700"
+            label="Đang xem"
+          />
+          <LegendItem
+            color="bg-[rgba(5,150,105,0.2)] border border-[rgba(5,150,105,0.3)]"
+            label="Đã chọn"
+          />
+          <LegendItem
+            color="bg-[rgba(217,119,6,0.2)] border border-[rgba(217,119,6,0.3)]"
+            label="Đánh dấu"
+          />
+        </div>
       </div>
-      <div className="bg-[var(--bg-glass-heavy)] border border-[var(--border-subtle)] rounded-xl p-4 grid grid-cols-2 gap-x-3 gap-y-2.5">
-        <LegendItem color="bg-[var(--bg-glass)] border border-[var(--border-subtle)]" label="Chưa làm" />
-        <LegendItem color="bg-gradient-to-br from-brand-600 to-brand-700" label="Đang xem" />
-        <LegendItem color="bg-[rgba(5,150,105,0.2)] border border-[rgba(5,150,105,0.3)]" label="Đã chọn" />
-        <LegendItem color="bg-[rgba(217,119,6,0.2)] border border-[rgba(217,119,6,0.3)]" label="Đánh dấu" />
-      </div>
-    </div>
 
       {/* Fixed Submit Button at Bottom */}
       <div className="p-6 border-t border-[var(--border-subtle)] bg-[var(--bg-glass-heavy)]">
@@ -94,7 +110,6 @@ export function QuestionNav({
           <Send className="w-[18px] h-[18px]" /> NỘP BÀI THI
         </button>
       </div>
-
     </aside>
   );
 }
